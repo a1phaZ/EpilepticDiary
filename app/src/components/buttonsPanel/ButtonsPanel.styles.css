@@ -1,0 +1,13 @@
+.buttons-panel {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+.buttons-panel button {
+    margin-right: 1rem;
+}
+
+.buttons-panel button:nth-last-child(n) {
+    margin-right: 0;
+}
