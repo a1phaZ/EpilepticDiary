@@ -4,13 +4,12 @@ import {disableButton, enableButton} from "../store/buttonsPanel/actions";
 export default function addItemToTimeLine (e) {
 	const {type, subType, color} = e.currentTarget.dataset;
 	const {disabled} = e.currentTarget.disabled;
-	const item = {
-		type: type,
-		subType: subType,
-		time: new Date().getTime(),
-		color: `badge-${color}`
-	};
-	console.log(item);
+	// const item = {
+	// 	type: type,
+	// 	subType: subType,
+	// 	time: new Date().getTime(),
+	// 	color: `badge-${color}`
+	// };
 	if (type === 'Сон') {
 		if (!disabled) {
 			store.dispatch(disableButton(type))

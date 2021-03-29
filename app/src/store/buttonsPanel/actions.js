@@ -1,4 +1,4 @@
-import {DISABLE_BUTTON, ENABLE_BUTTON} from "./actionTypes";
+import {DISABLE_BUTTON, ENABLE_BUTTON, HIDE_MODAL, SHOW_MODAL} from "./actionTypes";
 
 export const disableButton = (buttonType) => {
 	return {
@@ -15,5 +15,20 @@ export const enableButton = (buttonType) => {
 		payload: {
 			type: buttonType
 		}
+	}
+}
+
+export const showModal = (modalType) => {
+	return {
+		type: SHOW_MODAL,
+		payload: {
+			modalType: modalType
+		}
+	}
+}
+
+export const hideModal = () => {
+	return {
+		type: HIDE_MODAL
 	}
 }
