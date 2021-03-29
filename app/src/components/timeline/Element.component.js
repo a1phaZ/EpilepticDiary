@@ -1,10 +1,22 @@
 import React from 'react';
 import Rating from "../rating/Rating.component";
+import {Button} from "react-bootstrap";
 
 const formatTime = (time) => {
 	const date = new Date(time);
 	return new Intl.DateTimeFormat('ru-RU', {hour: 'numeric', minute:'numeric'}).format(date);
 }
+
+const endSleepButton = (
+	<Button variant={'primary'}
+	        onClick={() => {console.log('end sleep')}}
+	        data-type={'Сон'}
+	        data-sub-type={'конец'}
+	        data-color={'badge-primary'}
+	>
+		{'Пробуждение'}
+	</Button>
+)
 
 const Element = ({type, drugs = [], subType, description, time, color, quality, strength, count, series}) => {
 	const _renderedDrugs = drugs.map((drug, idx) => {
@@ -21,6 +33,7 @@ const Element = ({type, drugs = [], subType, description, time, color, quality, 
 				</span>
 				<div className="vertical-timeline-element-content bounce-in">
 					<h4 className="timeline-title">{type}{subType && ` - ${subType}`}{count && ` - ${count}`}</h4>
+					{type.toLowerCase() === 'сон' && endSleepButton}
 					{description && <p>{description}</p>}
 					{quality && <span>Качество сна: <Rating count={quality}/></span>}
 					{series && <div><b>Серия</b></div>}
