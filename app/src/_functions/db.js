@@ -31,11 +31,28 @@ export async function get(db, key, idxPath, idxVal) {
 	// return (await db).getAll(key);
 }
 
+export async function getOne(db, storeName, key) {
+	let tx = db.transaction('items');
+	let itemsStore = tx.objectStore(storeName);
+	return itemsStore.get(key);
+}
+
 export async function add(db, item) {
 	let tx = db.transaction('items', 'readwrite');
 	let itemsStore = tx.objectStore('items');
 	try {
-		await itemsStore.add(item);
+		return await itemsStore.add(item);
+	} catch (e) {
+		throw e;
+	}
+}
+
+export async function put(db, item) {
+	let tx = db.transaction('items', 'readwrite');
+	let itemsStore = tx.objectStore('items');
+	
+	try {
+		await itemsStore.put(item);
 	} catch (e) {
 		throw e;
 	}

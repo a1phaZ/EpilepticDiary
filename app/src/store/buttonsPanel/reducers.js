@@ -1,5 +1,4 @@
 import {DISABLE_BUTTON, ENABLE_BUTTON, HIDE_MODAL, SHOW_MODAL} from "./actionTypes";
-import addItemToTimeLine from "../../_functions/addItemToTimeLine";
 import {handleShowModal} from "../../_functions/handleModal";
 
 const initialState = {
@@ -9,8 +8,7 @@ const initialState = {
 			subType: 'начало',
 			icon: 'fa-bed',
 			disabled: false,
-			variant: 'primary',
-			onClick: addItemToTimeLine
+			variant: 'primary'
 		},
 		{
 			type: 'Еда',

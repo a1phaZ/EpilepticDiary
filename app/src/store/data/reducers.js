@@ -1,4 +1,4 @@
-import {SET_ITEM, SET_ITEMS} from './actionTypes';
+import {RESET_ITEM, SET_ITEM, SET_ITEMS} from './actionTypes';
 
 const initialState = {
 	currentDate: new Date().getTime(),
@@ -22,6 +22,21 @@ export const dataReducer = (state = initialState, action) => {
 			return {
 				...state,
 				items: sortData(action.payload.items)
+			}
+		}
+		case RESET_ITEM: {
+			const {item} = action.payload;
+			const idx = state.items.findIndex(({time}) => time === item.time);
+			if (idx === -1) {
+				return {
+					...state,
+				}
+			}
+			const newItems = [...state.items];
+			newItems.splice(idx, 1, item);
+			return {
+				...state,
+				items: sortData([...newItems])
 			}
 		}
 		default: {

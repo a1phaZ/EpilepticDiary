@@ -19,13 +19,15 @@ class App extends Component {
 		super(props);
 		this.state = {
 			db: null,
-			_currentDate: new Intl.DateTimeFormat('ru-RU', {day: 'numeric', month: 'long', year: 'numeric'}).format(new Date(this.props.currentDate))
+			_currentDate: new Intl.DateTimeFormat('ru-RU', {day: 'numeric', month: 'long', year: 'numeric'}).format(new Date(this.props.currentDate)),
+			sleepId: -1,
 		}
 		this.handlerShowModal = this.handlerShowModal.bind(this);
 		this.handleModalFilter = this.handleModalFilter.bind(this);
 		this.initDB = this.initDB.bind(this);
 		this.getItems = this.getItems.bind(this);
 		this.addItem = this.addItem.bind(this);
+		this.setSleepId = this.setSleepId.bind(this);
 	}
 	
 	initDB = async () => {
@@ -40,6 +42,16 @@ class App extends Component {
 		const {db} = this.state;
 		const idxVal = format(new Date(this.props.currentDate), 'yyyy-MM-dd');
 		const items = await get(db, ITEMS, 'date', idxVal);
+		
+		const idx = items.findIndex((item) => {
+			if (item.subType) {
+				return item?.subType.toLowerCase() === 'начало'
+			}
+			return false;
+		});
+		if (idx !== -1) {
+			this.setSleepId(items[idx]._id);
+		}
 		
 		// const tx = db.transaction(ITEMS);
 		// const itemsStore = tx.objectStore(ITEMS);
@@ -75,10 +87,14 @@ class App extends Component {
 		this.props.showModal();
 	}
 	
+	setSleepId = (id) => {
+		this.setState({sleepId: id});
+	}
+	
 	handleModalFilter = ((modalType, modals = []) => {
 		const idx = modals.findIndex(({type}) => modalType.toLowerCase() === type.toLowerCase());
 		return modals[idx];
-	})
+	});
 	
 	render() {
 		const {modalType, modals, buttons, modalShow, hideModal, items} = this.props;
@@ -89,8 +105,8 @@ class App extends Component {
 						<div className="main-card mb-3 card">
 							<div className="card-body">
 								<h5 className="card-title">{this.state._currentDate}</h5>
-								<ButtonsPanel buttons={buttons} />
-								<List data={items} />
+								<ButtonsPanel sleepId={this.state.sleepId} db={this.state.db} buttons={buttons} setSleepId={this.setSleepId}/>
+								<List db={this.state.db} data={items} sleepId={this.state.sleepId} setSleepId={this.setSleepId} />
 								<ModalPageComponent db={this.state.db} showModal={modalShow} handleClose={hideModal} modal={this.handleModalFilter(modalType, modals)}/>
 							</div>
 						</div>
