@@ -10,6 +10,21 @@ const formatTime = (time) => {
 	return new Intl.DateTimeFormat('ru-RU', {hour: 'numeric', minute:'numeric'}).format(date);
 }
 
+const getSleepDuration = (timeStart, timeEnd) => {
+	const hour = 60*60*1000;
+	const minute = 60*1000;
+	const duration = timeEnd - timeStart;
+	let durationStr = '';
+	const hourDuration = Math.trunc(duration / hour);
+	const minuteDuration = Math.trunc((duration - hourDuration*hour) / minute);
+	
+	if (hourDuration > 0) {
+		durationStr += `${hourDuration} часов и `
+	}
+	durationStr += `${minuteDuration} минут`
+	return durationStr
+}
+
 const Element = ({db, type, drugs = [], subType, description, time, color, quality, strength, count, series, timeEnd, sleepId, setSleepId}) => {
 	const _renderedDrugs = drugs.map((drug, idx) => {
 		const {title, dosage} = drug;
@@ -45,7 +60,8 @@ const Element = ({db, type, drugs = [], subType, description, time, color, quali
 				<div className="vertical-timeline-element-content bounce-in">
 					<h4 className="timeline-title">{type}{count && ` - ${count}`}</h4>
 					{(type.toLowerCase() === 'сон' && subType.toLowerCase() !== 'конец') && endSleepButton}
-					{(type.toLowerCase() === 'сон' && subType.toLowerCase() === 'конец' && timeEnd) && <span><b>Пробуждение:</b> {formatTime(timeEnd)}</span>}
+					{(type.toLowerCase() === 'сон' && subType.toLowerCase() === 'конец' && timeEnd) && <div><b>Пробуждение:</b> {formatTime(timeEnd)}</div>}
+					{(type.toLowerCase() === 'сон' && subType.toLowerCase() === 'конец' && timeEnd) && <div><b>Продолжительность:</b> {getSleepDuration(time, timeEnd)}</div>}
 					{description && <p>{description}</p>}
 					{quality && <span>Качество сна: <Rating count={quality}/></span>}
 					{series && <div><b>Серия</b></div>}
