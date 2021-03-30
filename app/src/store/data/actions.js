@@ -1,4 +1,13 @@
-import {SET_ITEM} from "./actionTypes";
+import {SET_ITEM, SET_ITEMS} from "./actionTypes";
+
+export const setItems = (items) => {
+	return {
+		type: SET_ITEMS,
+		payload: {
+			items
+		}
+	}
+}
 
 export const setItem = (item) => {
 	return {

@@ -1,14 +1,23 @@
-import {SET_ITEM} from './actionTypes';
+import {SET_ITEM, SET_ITEMS} from './actionTypes';
 
-const initialState = []
+const initialState = {
+	currentDate: new Date().getTime(),
+	items: []
+}
 
 export const dataReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case SET_ITEM: {
-			return [
+			return {
 				...state,
-				action.payload.item
-			];
+				items: [...state.items, action.payload.item]
+			};
+		}
+		case SET_ITEMS: {
+			return {
+				...state,
+				items: action.payload.items
+			}
 		}
 		default: {
 			return state;

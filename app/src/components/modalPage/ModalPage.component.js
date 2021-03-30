@@ -6,13 +6,17 @@ import {setItem} from "../../store/data/actions";
 import {store} from "../../index";
 import {hideModal} from "../../store/buttonsPanel/actions";
 import {Drugs} from "./Drugs.ModalPage";
+import {add} from "../../_functions/db";
+import {format} from 'date-fns';
 
-const ModalPageComponent = ({handleClose, showModal, modal = {},}) => {
+const ModalPageComponent = ({db, handleClose, showModal, modal = {},}) => {
 	const {type, description, drugs, count, series, strength} = modal;
 	const [show, setShow] = useState(false);
 	
-	const handleSubmit = (item) => {
+	const handleSubmit = async (item) => {
 		item.time = new Date().getTime();
+		item.date = format(new Date(), 'yyyy-MM-dd');
+		await add(db, item);
 		store.dispatch(setItem(item));
 		store.dispatch(hideModal());
 	}
