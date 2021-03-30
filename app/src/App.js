@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Container} from "react-bootstrap";
+import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import List from "./components/timeline/List.component";
 import './App.css';
 import ButtonsPanel from "./components/buttonsPanel/ButtonsPanel.component";
@@ -19,7 +19,11 @@ class App extends Component {
 		super(props);
 		this.state = {
 			db: null,
-			_currentDate: new Intl.DateTimeFormat('ru-RU', {day: 'numeric', month: 'long', year: 'numeric'}).format(new Date(this.props.currentDate)),
+			_currentDate: new Intl.DateTimeFormat('ru-RU', {
+				day: 'numeric',
+				month: 'long',
+				year: 'numeric'
+			}).format(new Date(this.props.currentDate)),
 			sleepId: -1,
 		}
 		this.handlerShowModal = this.handlerShowModal.bind(this);
@@ -99,20 +103,48 @@ class App extends Component {
 	render() {
 		const {modalType, modals, buttons, modalShow, hideModal, items} = this.props;
 		return (
-			<Container>
-				<div className="row d-flex justify-content-center mt-3 mb-auto">
-					<div className="col-md-6">
-						<div className="main-card mb-3 card">
-							<div className="card-body">
-								<h5 className="card-title">{this.state._currentDate}</h5>
-								<ButtonsPanel sleepId={this.state.sleepId} db={this.state.db} buttons={buttons} setSleepId={this.setSleepId}/>
-								<List db={this.state.db} data={items} sleepId={this.state.sleepId} setSleepId={this.setSleepId} />
-								<ModalPageComponent db={this.state.db} showModal={modalShow} handleClose={hideModal} modal={this.handleModalFilter(modalType, modals)}/>
-							</div>
+			<>
+				<Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+					<Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+					<Navbar.Toggle aria-controls="responsive-navbar-nav"/>
+					<Navbar.Collapse id="responsive-navbar-nav">
+						<Nav className="mr-auto">
+							<Nav.Link href="#features">Features</Nav.Link>
+							<Nav.Link href="#pricing">Pricing</Nav.Link>
+							<NavDropdown title="Dropdown" id="collasible-nav-dropdown">
+								<NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
+								<NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
+								<NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+								<NavDropdown.Divider/>
+								<NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
+							</NavDropdown>
+						</Nav>
+						<Nav>
+							<Nav.Link href="#deets">More deets</Nav.Link>
+							<Nav.Link eventKey={2} href="#memes">
+								Dank memes
+							</Nav.Link>
+						</Nav>
+					</Navbar.Collapse>
+				</Navbar>
+				<Container>
+					
+					<div className="row d-flex justify-content-center mt-3 mb-auto">
+						<div className="col-md-6">
+							{/*<div className="main-card mb-3 card">*/}
+							{/*	<div className="card-body">*/}
+									<h5>{this.state._currentDate}</h5>
+									<ButtonsPanel sleepId={this.state.sleepId} db={this.state.db} buttons={buttons}
+																setSleepId={this.setSleepId}/>
+									<List db={this.state.db} data={items} sleepId={this.state.sleepId} setSleepId={this.setSleepId}/>
+									<ModalPageComponent db={this.state.db} showModal={modalShow} handleClose={hideModal}
+																			modal={this.handleModalFilter(modalType, modals)}/>
+							{/*	</div>*/}
+							{/*</div>*/}
 						</div>
 					</div>
-				</div>
-			</Container>
+				</Container>
+			</>
 		);
 	}
 }
