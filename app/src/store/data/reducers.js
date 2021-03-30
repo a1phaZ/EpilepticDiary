@@ -5,18 +5,23 @@ const initialState = {
 	items: []
 }
 
+const sortData = (data) => data.sort((a, b) => {
+	if (a.time > b.time) return -1;
+	return 1;
+});
+
 export const dataReducer = (state = initialState, action) => {
 	switch (action.type) {
 		case SET_ITEM: {
 			return {
 				...state,
-				items: [...state.items, action.payload.item]
+				items: sortData([...state.items, action.payload.item])
 			};
 		}
 		case SET_ITEMS: {
 			return {
 				...state,
-				items: action.payload.items
+				items: sortData(action.payload.items)
 			}
 		}
 		default: {
