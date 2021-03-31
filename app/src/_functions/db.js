@@ -1,34 +1,28 @@
 import {openDB} from "idb/with-async-ittr";
 
 export async function initializeDB() {
-	return await openDB('items', 1, {
+	return await openDB('epileptic_diary', 1, {
 		upgrade(database) {
 			const store = database.createObjectStore('items', {keyPath: '_id', autoIncrement: true});
 			store.createIndex('date', 'date');
+			const settingsStore = database.createObjectStore('settings', {keyPath: '_id', autoIncrement: true});
+			settingsStore.createIndex('type', 'type');
 		}
 	});
 }
 
 export async function get(db, key, idxPath, idxVal) {
 	let tx = db.transaction(key);
-	// let itemsStore = tx.objectStore(key);
 
 	let items = [];
 
-	// let cursor = await itemsStore.openCursor();
-
 	const index = tx.store.index(idxPath);
-	// while (cursor) {
-	// 	items.push(cursor.value)
-	// 	cursor = await cursor.continue();
-	// }
 	
 	for await (const cursor of index.iterate(idxVal)) {
 		items.push(cursor.value);
 	}
 
 	return items;
-	// return (await db).getAll(key);
 }
 
 export async function getOne(db, storeName, key) {
@@ -37,9 +31,9 @@ export async function getOne(db, storeName, key) {
 	return itemsStore.get(key);
 }
 
-export async function add(db, item) {
-	let tx = db.transaction('items', 'readwrite');
-	let itemsStore = tx.objectStore('items');
+export async function add(db, item, storeName) {
+	let tx = db.transaction(storeName, 'readwrite');
+	let itemsStore = tx.objectStore(storeName);
 	try {
 		return await itemsStore.add(item);
 	} catch (e) {
@@ -47,9 +41,9 @@ export async function add(db, item) {
 	}
 }
 
-export async function put(db, item) {
-	let tx = db.transaction('items', 'readwrite');
-	let itemsStore = tx.objectStore('items');
+export async function put(db, item, storeName) {
+	let tx = db.transaction(storeName, 'readwrite');
+	let itemsStore = tx.objectStore(storeName);
 	
 	try {
 		await itemsStore.put(item);
