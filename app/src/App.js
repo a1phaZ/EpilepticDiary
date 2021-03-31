@@ -6,7 +6,7 @@ import Settings from "./components/settings/Settings.component";
 
 export default function App() {
 	return (
-		<Router>
+		<Router basename={'/EpilepticDiary'}>
 			<AppNavbar/>
 			<Switch>
 				<Route path={'/settings'}>
