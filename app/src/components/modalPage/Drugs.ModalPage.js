@@ -1,15 +1,8 @@
 import React, {useState} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
+import {Link, useRouteMatch} from "react-router-dom";
 
-const dl = [
-	{_id: 1, title: 'Название 1', dosage: 'дозировка 1'},
-	{_id: 2, title: 'Название 2', dosage: 'дозировка 2'},
-	{_id: 3, title: 'Название 3', dosage: 'дозировка 3'},
-	{_id: 4, title: 'Название 4', dosage: 'дозировка 4'},
-	{_id: 5, title: 'Название 5', dosage: 'дозировка 5'}
-]
-
-export const Drugs = ({drugsList = dl, handleClose, handleSubmit}) => {
+export const Drugs = ({drugsList = [], handleClose, handleSubmit}) => {
 	const [drugs, setDrugs] = useState(() => drugsList.map((drug) => {
 		drug.checked = false;
 		return drug;
@@ -30,9 +23,10 @@ export const Drugs = ({drugsList = dl, handleClose, handleSubmit}) => {
 	return (
 		<>
 			<Modal.Body>
+				{drugs.length === 0 && <h3>Нет ни одного лекарства, перейдите в <CustomLink to={'/settings'} label={'настройки'}/></h3>}
 				<Form>
-					{drugs.map((drug) => (
-						<Form.Group controlId={`formDrug-${drug._id}`} key={drug?._id}>
+					{drugs.map((drug,) => (
+						<Form.Group controlId={`formDrug-${drug.title}-${drug.dosage}`} key={`${drug.title}-${drug.dosage}`}>
 							<Form.Check
 								type={'checkbox'}
 								data-id={drug?._id}
@@ -47,19 +41,37 @@ export const Drugs = ({drugsList = dl, handleClose, handleSubmit}) => {
 			</Modal.Body>
 			<Modal.Footer>
 				<Button variant="secondary" onClick={handleClose}>
-					Закрыть
+					Отмена
 				</Button>
-				<Button variant="primary" onClick={() => {
-					const item = {
-						type: 'Лекарства',
-						drugs: drugs.filter(drug => drug.checked),
-						color: 'badge-warning'
-					}
-					handleSubmit(item);
-				}}>
+				<Button
+					variant="primary"
+					onClick={() => {
+						const item = {
+							type: 'Лекарства',
+							drugs: drugs.filter(drug => drug.checked),
+							color: 'badge-danger'
+						}
+						handleSubmit(item);
+					}}
+					disabled={drugs.length === 0}
+				>
 					Добавить
 				</Button>
 			</Modal.Footer>
 		</>
 	)
+}
+
+function CustomLink({ label, to, activeOnlyWhenExact }) {
+	let match = useRouteMatch({
+		path: to,
+		exact: activeOnlyWhenExact
+	});
+	
+	return (
+		<span className={match ? "active" : ""}>
+			{match && "> "}
+			<Link to={to}>{label}</Link>
+		</span>
+	);
 }
