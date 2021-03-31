@@ -25,7 +25,7 @@ const ButtonsPanel = ({sleepId, db, buttons, setSleepId}) => {
 									date: format(new Date(), 'yyyy-MM-dd')
 								};
 				
-								setSleepId(await add(db, item));
+								setSleepId(await add(db, item, 'items'));
 								if (!disabled) {
 									store.dispatch(disableButton(type));
 									store.dispatch(setItem(item));
