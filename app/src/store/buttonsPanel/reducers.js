@@ -21,14 +21,14 @@ const initialState = {
 			type: 'Лекарства',
 			icon: 'fa-medkit',
 			disabled: false,
-			variant: 'warning',
+			variant: 'danger',
 			onClick: handleShowModal
 		},
 		{
 			type: 'Приступы',
 			icon: 'fa-heartbeat',
 			disabled: false,
-			variant: 'danger',
+			variant: 'warning',
 			onClick: handleShowModal
 		}
 	],
