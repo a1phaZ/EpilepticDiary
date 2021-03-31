@@ -39,7 +39,7 @@ const Element = ({db, type, drugs = [], subType, description, time, color, quali
 							const item = await getOne(db, 'items', sleepId);
 							item.subType = 'конец';
 							item.timeEnd = new Date().getTime();
-							await put(db, item);
+							await put(db, item, 'items');
 							setSleepId(-1);
 							store.dispatch(resetItem(item));
 						}}
