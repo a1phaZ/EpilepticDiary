@@ -9,7 +9,8 @@ import {connect} from "react-redux";
 import {setItem, setItems} from "./store/data/actions";
 import ModalPageComponent from "./components/modalPage/ModalPage.component";
 import {get, initializeDB} from "./_functions/db";
-import {format} from 'date-fns';
+import {format, subDays} from 'date-fns';
+import {sortData} from "./_functions/handlersData";
 
 const ITEMS = 'items';
 const READWRITE = 'readwrite';
@@ -45,7 +46,14 @@ class App extends Component {
 	getItems = async () => {
 		const {db} = this.state;
 		const idxVal = format(new Date(this.props.currentDate), 'yyyy-MM-dd');
-		const items = await get(db, ITEMS, 'date', idxVal);
+		let items = await get(db, ITEMS, 'date', idxVal);
+		let subDaysItem = sortData(await get(db, ITEMS, 'date', format(subDays(new Date(this.props.currentDate), 1), 'yyyy-MM-dd')));
+		
+		if (subDaysItem[0].type.toLowerCase() === 'сон') {
+			if (subDaysItem[0].subType.toLowerCase() === 'начало') {
+				items.push(subDaysItem[0]);
+			}
+		}
 		
 		const idx = items.findIndex((item) => {
 			if (item.subType) {
@@ -56,17 +64,7 @@ class App extends Component {
 		if (idx !== -1) {
 			this.setSleepId(items[idx]._id);
 		}
-		
-		// const tx = db.transaction(ITEMS);
-		// const itemsStore = tx.objectStore(ITEMS);
-		//
-		// const items = await itemsStore.getAll();
-		// let cursor = await itemsStore.openCursor();
-		// while (cursor) {
-		// 	// items.push(cursor.value)
-		// 	await setItem(cursor.value);
-		// 	cursor = await cursor.continue();
-		// }
+
 		if (items.length) {
 			this.props.setItems(items);
 		}

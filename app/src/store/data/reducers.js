@@ -1,14 +1,10 @@
 import {RESET_ITEM, SET_ITEM, SET_ITEMS} from './actionTypes';
+import {sortData} from "../../_functions/handlersData";
 
 const initialState = {
 	currentDate: new Date().getTime(),
 	items: []
 }
-
-const sortData = (data) => data.sort((a, b) => {
-	if (a.time > b.time) return -1;
-	return 1;
-});
 
 export const dataReducer = (state = initialState, action) => {
 	switch (action.type) {
