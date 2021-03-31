@@ -55,7 +55,7 @@ export const Drugs = ({drugsList = [], handleClose, handleSubmit}) => {
 						}
 						handleSubmit(item);
 					}}
-					disabled={drugs.length === 0}
+					disabled={drugs.length === 0 || drugs.filter(drug => drug.checked).length === 0}
 				>
 					Добавить
 				</Button>
