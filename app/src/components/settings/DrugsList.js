@@ -1,13 +1,17 @@
 import React from 'react';
+import {Badge, Card, ListGroup} from "react-bootstrap";
 
 const DrugList = ({data}) => {
-	const _renderedList = data.map((drug, key) => {
-		return <li key={key}>{drug.title}</li>
+	const _renderedList = data.map(drug => {
+		return <ListGroup.Item key={drug._id}>{drug.title} <Badge variant={'info'}>{drug.dosage}</Badge></ListGroup.Item>
 	})
 	return (
-		<ul>
-			{_renderedList}
-		</ul>
+		<Card>
+			<Card.Header><h6>Список лекарств</h6></Card.Header>
+			<ListGroup>
+				{_renderedList}
+			</ListGroup>
+		</Card>
 	)
 }
 

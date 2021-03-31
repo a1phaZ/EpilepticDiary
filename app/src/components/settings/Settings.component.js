@@ -6,6 +6,7 @@ import {get, initializeDB} from "../../_functions/db";
 import {setDrug, setDrugs} from "../../store/settings/actions";
 import DrugForm from "./DrugForm.component";
 import DrugsList from "./DrugsList";
+import {sortData} from "../../_functions/handlersData";
 
 const SETTINGS = 'settings';
 const READWRITE = 'readwrite';
@@ -71,9 +72,11 @@ class Settings extends Component {
 				<div className="row d-flex justify-content-center mt-3 mb-auto">
 					<div className="col-md-6">
 						<h5>Настройки</h5>
+						<div className={'dropdown-divider'} />
 						<h6>Лекарства</h6>
 						<DrugForm setDrug={this.setDrug} />
-						<DrugsList data={this.props.drugs} />
+						<DrugsList data={sortData(this.props.drugs)} />
+						<div className={'dropdown-divider'} />
 					</div>
 				</div>
 			</Container>

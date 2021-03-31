@@ -37,6 +37,7 @@ const DrugForm = ({setDrug}) => {
 					setDrug({type: 'drug', title, dosage, time: new Date().getTime(), archive: false});
 					clearForm();
 				}}
+				disabled={title === '' || dosage <= 0}
 			>
 				Добавить
 			</Button>

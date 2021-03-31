@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Form, Modal} from "react-bootstrap";
+import {Badge, Button, Form, Modal} from "react-bootstrap";
 import {Link, useRouteMatch} from "react-router-dom";
 
 export const Drugs = ({drugsList = [], handleClose, handleSubmit}) => {
@@ -25,18 +25,20 @@ export const Drugs = ({drugsList = [], handleClose, handleSubmit}) => {
 			<Modal.Body>
 				{drugs.length === 0 && <h3>Нет ни одного лекарства, перейдите в <CustomLink to={'/settings'} label={'настройки'}/></h3>}
 				<Form>
-					{drugs.map((drug,) => (
-						<Form.Group controlId={`formDrug-${drug.title}-${drug.dosage}`} key={`${drug.title}-${drug.dosage}`}>
-							<Form.Check
-								type={'checkbox'}
-								data-id={drug?._id}
-								onChange={handleChecked}
-								value={drug.checked}
-								label={`${drug?.title} (${drug?.dosage})`}
-								title={`${drug?.title} (${drug?.dosage})`}
-							/>
-						</Form.Group>
-					))}
+					{drugs.map((drug,) => {
+						const label = <span>{drug.title} <Badge variant={'info'}>{drug.dosage}</Badge></span>
+						return (
+							<Form.Group controlId={`formDrug-${drug.title}-${drug.dosage}`} key={`${drug.title}-${drug.dosage}`}>
+								<Form.Check
+									type={'checkbox'}
+									data-id={drug?._id}
+									onChange={handleChecked}
+									value={drug.checked}
+									label={label}
+								/>
+							</Form.Group>
+						)
+					})}
 				</Form>
 			</Modal.Body>
 			<Modal.Footer>
