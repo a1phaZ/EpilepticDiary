@@ -9,14 +9,14 @@ import {Drugs} from "./Drugs.ModalPage";
 import {add} from "../../_functions/db";
 import {format} from 'date-fns';
 
-const ModalPageComponent = ({db, handleClose, showModal, modal = {},}) => {
+const ModalPageComponent = ({db, handleClose, showModal, modal = {}, drugsList}) => {
 	const {type, description, drugs, count, series, strength} = modal;
 	const [show, setShow] = useState(false);
 	
 	const handleSubmit = async (item) => {
 		item.time = new Date().getTime();
 		item.date = format(new Date(), 'yyyy-MM-dd');
-		await add(db, item);
+		await add(db, item, 'items');
 		store.dispatch(setItem(item));
 		store.dispatch(hideModal());
 	}
@@ -33,7 +33,7 @@ const ModalPageComponent = ({db, handleClose, showModal, modal = {},}) => {
 			</Modal.Header>
 			{description && <Description handleClose={handleClose} handleSubmit={handleSubmit} />}
 			{(count && series && strength) && <Attack handleClose={handleClose} handleSubmit={handleSubmit} />}
-			{drugs && <Drugs handleClose={handleClose} handleSubmit={handleSubmit} />}
+			{drugs && <Drugs drugsList={drugsList} handleClose={handleClose} handleSubmit={handleSubmit} />}
 			{/*<Modal.Body>*/}
 			{/*	<Form>*/}
 			{/*		{description && <Description setDescription={setDescription}/>}*/}
