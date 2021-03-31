@@ -36,8 +36,8 @@ export const Attack = ({handleClose, handleSubmit}) => {
 	return (
 		<>
 			<Modal.Body>
-				<Form>
-					<Form.Group controlId={'formAttackSeries'}>
+				<Form inline style={{justifyContent: 'space-between'}}>
+					<Form.Group controlId={'formAttackSeries'} className="mb-2 mr-sm-2">
 						<Form.Check
 							type={'checkbox'}
 							id={'checkbox-series'}
@@ -49,13 +49,18 @@ export const Attack = ({handleClose, handleSubmit}) => {
 						/>
 					</Form.Group>
 					
-					{series && <Form.Group controlId={'formAttackCount'}>
-						<Form.Control type={'number'} placeholder={'Кол-во приступов'} value={count} onChange={(e) => {
-							setCount(e.currentTarget.value)
-						}}/>
-					</Form.Group>}
+					<Form.Group controlId={'formAttackCount'} className="mb-2 mr-sm-2">
+						<Form.Control
+							type={'number'}
+							placeholder={'Кол-во приступов'}
+							value={count}
+							disabled={!series}
+							onChange={(e) => {
+								setCount(e.currentTarget.value)
+							}}/>
+					</Form.Group>
 					
-					<Form.Group controlId="formAttackStrength">
+					<Form.Group controlId="formAttackStrength" className={'mb-2'} style={{width: '100%'}}>
 						<Form.Label>{`Сила приступа:`}</Form.Label>
 						<Form.Control type="range" min={1} max={3} value={strength} step={1}
 													onChange={(e) => setStrength(e.currentTarget.value)}/>
