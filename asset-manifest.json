@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/EpilepticDiary/static/css/main.36916768.chunk.css",
-    "main.js": "/EpilepticDiary/static/js/main.b8c65350.chunk.js",
-    "main.js.map": "/EpilepticDiary/static/js/main.b8c65350.chunk.js.map",
+    "main.js": "/EpilepticDiary/static/js/main.02699750.chunk.js",
+    "main.js.map": "/EpilepticDiary/static/js/main.02699750.chunk.js.map",
     "runtime-main.js": "/EpilepticDiary/static/js/runtime-main.668c6789.js",
     "runtime-main.js.map": "/EpilepticDiary/static/js/runtime-main.668c6789.js.map",
     "static/css/2.4c97ca4f.chunk.css": "/EpilepticDiary/static/css/2.4c97ca4f.chunk.css",
@@ -20,6 +20,6 @@
     "static/css/2.4c97ca4f.chunk.css",
     "static/js/2.841f9a10.chunk.js",
     "static/css/main.36916768.chunk.css",
-    "static/js/main.b8c65350.chunk.js"
+    "static/js/main.02699750.chunk.js"
   ]
 }
