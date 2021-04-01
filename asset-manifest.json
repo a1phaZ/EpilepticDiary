@@ -1,25 +1,25 @@
 {
   "files": {
-    "main.css": "/EpilepticDiary/static/css/main.36916768.chunk.css",
-    "main.js": "/EpilepticDiary/static/js/main.65c2d1a0.chunk.js",
-    "main.js.map": "/EpilepticDiary/static/js/main.65c2d1a0.chunk.js.map",
-    "runtime-main.js": "/EpilepticDiary/static/js/runtime-main.668c6789.js",
-    "runtime-main.js.map": "/EpilepticDiary/static/js/runtime-main.668c6789.js.map",
-    "static/css/2.4c97ca4f.chunk.css": "/EpilepticDiary/static/css/2.4c97ca4f.chunk.css",
-    "static/js/2.7a0e0da3.chunk.js": "/EpilepticDiary/static/js/2.7a0e0da3.chunk.js",
-    "static/js/2.7a0e0da3.chunk.js.map": "/EpilepticDiary/static/js/2.7a0e0da3.chunk.js.map",
-    "static/js/3.fb7dfe9a.chunk.js": "/EpilepticDiary/static/js/3.fb7dfe9a.chunk.js",
-    "static/js/3.fb7dfe9a.chunk.js.map": "/EpilepticDiary/static/js/3.fb7dfe9a.chunk.js.map",
-    "index.html": "/EpilepticDiary/index.html",
-    "static/css/2.4c97ca4f.chunk.css.map": "/EpilepticDiary/static/css/2.4c97ca4f.chunk.css.map",
-    "static/css/main.36916768.chunk.css.map": "/EpilepticDiary/static/css/main.36916768.chunk.css.map",
-    "static/js/2.7a0e0da3.chunk.js.LICENSE.txt": "/EpilepticDiary/static/js/2.7a0e0da3.chunk.js.LICENSE.txt"
+    "main.css": "./static/css/main.36916768.chunk.css",
+    "main.js": "./static/js/main.27348bc3.chunk.js",
+    "main.js.map": "./static/js/main.27348bc3.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.b256b1d3.js",
+    "runtime-main.js.map": "./static/js/runtime-main.b256b1d3.js.map",
+    "static/css/2.4c97ca4f.chunk.css": "./static/css/2.4c97ca4f.chunk.css",
+    "static/js/2.841f9a10.chunk.js": "./static/js/2.841f9a10.chunk.js",
+    "static/js/2.841f9a10.chunk.js.map": "./static/js/2.841f9a10.chunk.js.map",
+    "static/js/3.fb7dfe9a.chunk.js": "./static/js/3.fb7dfe9a.chunk.js",
+    "static/js/3.fb7dfe9a.chunk.js.map": "./static/js/3.fb7dfe9a.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/2.4c97ca4f.chunk.css.map": "./static/css/2.4c97ca4f.chunk.css.map",
+    "static/css/main.36916768.chunk.css.map": "./static/css/main.36916768.chunk.css.map",
+    "static/js/2.841f9a10.chunk.js.LICENSE.txt": "./static/js/2.841f9a10.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.668c6789.js",
+    "static/js/runtime-main.b256b1d3.js",
     "static/css/2.4c97ca4f.chunk.css",
-    "static/js/2.7a0e0da3.chunk.js",
+    "static/js/2.841f9a10.chunk.js",
     "static/css/main.36916768.chunk.css",
-    "static/js/main.65c2d1a0.chunk.js"
+    "static/js/main.27348bc3.chunk.js"
   ]
 }
