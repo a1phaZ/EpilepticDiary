@@ -5,6 +5,7 @@ import {connect} from "react-redux";
 import {setDB} from "../../store/data/actions";
 import {Form, FormGroup} from "react-bootstrap";
 import {startOfMonth, endOfMonth, format} from 'date-fns';
+import Canvas from '../canvas/Canvas.component';
 import {
 	data4Stats,
 	filteredByAttack,
@@ -23,14 +24,16 @@ class StatsComponent extends Component {
 			endOfRange: format(endOfMonth(new Date()), 'yyyy-MM-dd'),
 			data4Stats: []
 		}
-
+		
 		this.initDB = this.initDB.bind(this);
 		this.prepareData = this.prepareData.bind(this);
 	}
 	
 	initDB = async () => {
-		await init_db.call(this);
-		await this.prepareData();
+		const db = await init_db.call(this);
+		if (db) {
+			await this.prepareData();
+		}
 	}
 	
 	componentDidMount() {
@@ -43,7 +46,7 @@ class StatsComponent extends Component {
 		const attackItems = filteredByAttack(items, 'приступы');
 		const attacksGroupedByDate = reduceAttackByDate(attackItems);
 		const attackColumns = prepareAttackColumns(attacksGroupedByDate);
-
+		
 		const opts = {
 			colors: ['#3DC23F', '#F34C40'],
 			columns: attackColumns,
@@ -64,24 +67,27 @@ class StatsComponent extends Component {
 	
 	render() {
 		return (
-			<FormGroup className={'date-picker'}>
-				<Form>
-					<Form.Control
-						type={'month'}
-						className={'month-picker-input'}
-						onKeyDown={(e) => e.preventDefault()}
-						value={this.state.month}
-						onChange={(e) => {
-							const {value} = e.currentTarget;
-							this.setState({
-								month: value,
-								startOfRange: format(startOfMonth(new Date(value)), 'yyyy-MM-dd'),
-								endOfRange: format(endOfMonth(new Date(value)), 'yyyy-MM-dd')
-							});
-						}}
-					/>
-				</Form>
-			</FormGroup>
+			<>
+				<FormGroup className={'date-picker'}>
+					<Form>
+						<Form.Control
+							type={'month'}
+							className={'month-picker-input'}
+							onKeyDown={(e) => e.preventDefault()}
+							value={this.state.month}
+							onChange={(e) => {
+								const {value} = e.currentTarget;
+								this.setState({
+									month: value,
+									startOfRange: format(startOfMonth(new Date(value)), 'yyyy-MM-dd'),
+									endOfRange: format(endOfMonth(new Date(value)), 'yyyy-MM-dd')
+								});
+							}}
+						/>
+					</Form>
+				</FormGroup>
+				<Canvas data={this.state.data4Stats} />
+			</>
 		)
 	}
 }
