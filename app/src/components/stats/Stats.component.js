@@ -18,7 +18,6 @@ class StatsComponent extends Component {
 		super(props);
 		
 		this.state = {
-			db: this.props.db,
 			month: format(new Date(), 'yyyy-MM'),
 			startOfRange: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
 			endOfRange: format(endOfMonth(new Date()), 'yyyy-MM-dd'),
@@ -39,7 +38,7 @@ class StatsComponent extends Component {
 	}
 	
 	prepareData = async () => {
-		const {db} = this.state;
+		const {db} = this.props;
 		const items = await get(db, 'items', 'date', IDBKeyRange.bound(this.state.startOfRange, this.state.endOfRange));
 		const attackItems = filteredByAttack(items, 'приступы');
 		const attacksGroupedByDate = reduceAttackByDate(attackItems);

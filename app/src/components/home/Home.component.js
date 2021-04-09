@@ -22,7 +22,6 @@ class HomeComponent extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			db: this.props.db,
 			_currentDate: new Intl.DateTimeFormat('ru-RU', {
 				day: 'numeric',
 				month: 'long',
@@ -43,7 +42,7 @@ class HomeComponent extends Component {
 	initDB = async () => {
 		await init_db.call(this);
 		
-		if (this.state.db) {
+		if (this.props.db) {
 			await this.getItems();
 		} else {
 			this.props.setItems([]);
@@ -51,7 +50,7 @@ class HomeComponent extends Component {
 	}
 	
 	getItems = async () => {
-		const {db} = this.state;
+		const {db} = this.props;
 		const idxVal = format(new Date(this.props.currentDate), 'yyyy-MM-dd');
 		let items = await get(db, ITEMS, 'date', idxVal);
 		let subDaysItem = sortData(await get(db, ITEMS, 'date', format(subDays(new Date(this.props.currentDate), 1), 'yyyy-MM-dd')));

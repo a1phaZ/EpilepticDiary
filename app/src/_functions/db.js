@@ -1,12 +1,12 @@
 import {openDB} from "idb/with-async-ittr";
 
 export async function init_db() {
-	if (!this.state.db) {
+	if (!this.props.db) {
 		const db = await initializeDB();
-		this.setState({db: db});
+		// this.setState({db: db});
 		this.props.setDB(db);
 	} else {
-		this.setState({db: this.props.db});
+		// this.setState({db: this.props.db});
 	}
 }
 
