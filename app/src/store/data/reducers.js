@@ -1,4 +1,4 @@
-import {RESET_ITEM, SET_ITEM, SET_ITEMS} from './actionTypes';
+import {RESET_ITEM, SET_DATE, SET_ITEM, SET_ITEMS} from './actionTypes';
 import {sortData} from "../../_functions/handlersData";
 
 const initialState = {
@@ -33,6 +33,12 @@ export const dataReducer = (state = initialState, action) => {
 			return {
 				...state,
 				items: sortData([...newItems])
+			}
+		}
+		case SET_DATE: {
+			return {
+				...state,
+				currentDate: new Date(action.payload.date).getTime()
 			}
 		}
 		default: {

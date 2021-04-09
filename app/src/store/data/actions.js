@@ -1,4 +1,4 @@
-import {RESET_ITEM, SET_ITEM, SET_ITEMS} from "./actionTypes";
+import {RESET_ITEM, SET_DATE, SET_ITEM, SET_ITEMS} from "./actionTypes";
 
 export const setItems = (items) => {
 	return {
@@ -23,6 +23,15 @@ export const resetItem = (item) => {
 		type: RESET_ITEM,
 		payload: {
 			item
+		}
+	}
+}
+
+export const setDate = (date) => {
+	return {
+		type: SET_DATE,
+		payload: {
+			date
 		}
 	}
 }

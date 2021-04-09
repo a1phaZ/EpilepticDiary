@@ -6,12 +6,13 @@ import ButtonsPanel from "../buttonsPanel/ButtonsPanel.component";
 import {bindActionCreators} from "redux";
 import {disableButton, enableButton, hideModal, showModal} from "../../store/buttonsPanel/actions";
 import {connect} from "react-redux";
-import {setItem, setItems} from "../../store/data/actions";
+import {setDate, setItem, setItems} from "../../store/data/actions";
 import ModalPageComponent from "../modalPage/ModalPage.component";
 import {get, initializeDB} from "../../_functions/db";
 import {format, subDays} from 'date-fns';
 import {sortData} from "../../_functions/handlersData";
 import {setDrugs} from "../../store/settings/actions";
+import DatePicker from "../datePicker/DatePicker.component";
 
 const ITEMS = 'items';
 const SETTINGS = 'settings';
@@ -27,6 +28,7 @@ class HomeComponent extends Component {
 				month: 'long',
 				year: 'numeric'
 			}).format(new Date(this.props.currentDate)),
+			today: format(new Date(), 'yyyy-MM-dd'),
 			sleepId: -1,
 		}
 		this.handlerShowModal = this.handlerShowModal.bind(this);
@@ -35,6 +37,7 @@ class HomeComponent extends Component {
 		this.getItems = this.getItems.bind(this);
 		this.addItem = this.addItem.bind(this);
 		this.setSleepId = this.setSleepId.bind(this);
+		this.setDateFromDatepicker = this.setDateFromDatepicker.bind(this);
 	}
 	
 	initDB = async () => {
@@ -67,6 +70,8 @@ class HomeComponent extends Component {
 		
 		if (items.length) {
 			this.props.setItems(items);
+		} else {
+			this.props.setItems([]);
 		}
 		
 		let drugs = await get(db, SETTINGS, 'type', 'drug');
@@ -86,8 +91,18 @@ class HomeComponent extends Component {
 		}
 	}
 	
+	setDateFromDatepicker = (date) => {
+		this.props.setDate(date);
+	}
+	
 	componentDidMount() {
 		this.initDB();
+	}
+	
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		if (prevProps.currentDate !== this.props.currentDate) {
+			this.getItems();
+		}
 	}
 	
 	handlerShowModal = () => {
@@ -112,8 +127,9 @@ class HomeComponent extends Component {
 					<div className="row d-flex justify-content-center mt-3 mb-auto">
 						<div className="col-md-6">
 							<h5>{this.state._currentDate}</h5>
+							<DatePicker setDate={this.setDateFromDatepicker} currentDate={this.props.currentDate}/>
 							<ButtonsPanel sleepId={this.state.sleepId} db={this.state.db} buttons={buttons}
-														setSleepId={this.setSleepId}/>
+														 setSleepId={this.setSleepId} notToday={format(this.props.currentDate, 'yyyy-MM-dd') !== this.state.today}/>
 							<List db={this.state.db} data={items} sleepId={this.state.sleepId} setSleepId={this.setSleepId}/>
 							<ModalPageComponent db={this.state.db} showModal={modalShow} handleClose={hideModal}
 																	modal={this.handleModalFilter(modalType, modals)} drugsList={drugs}/>
@@ -140,7 +156,7 @@ const mapStateToProps = (state) => {
 function mapDispatchToProps(dispatch) {
 	return {
 		dispatch,
-		...bindActionCreators({disableButton, enableButton, setItem, hideModal, showModal, setItems, setDrugs}, dispatch)
+		...bindActionCreators({disableButton, enableButton, setItem, hideModal, showModal, setItems, setDrugs, setDate}, dispatch)
 	}
 }
 

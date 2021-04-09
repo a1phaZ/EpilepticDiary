@@ -7,13 +7,13 @@ import {disableButton, enableButton} from "../../store/buttonsPanel/actions";
 import {setItem} from "../../store/data/actions";
 import {format} from "date-fns";
 
-const ButtonsPanel = ({sleepId, db, buttons, setSleepId}) => {
+const ButtonsPanel = ({sleepId, db, buttons, setSleepId, notToday}) => {
 	const _renderedButtons = buttons.map((button, idx) => {
 		const {variant, onClick, icon, type, subType} = button;
 		return (
 			<Button key={idx}
 							variant={variant}
-							disabled={(sleepId !== -1) && (type.toLowerCase() === 'сон') }
+							disabled={(sleepId !== -1) && (type.toLowerCase() === 'сон')}
 							onClick={onClick ? onClick : async (e) => {
 								const {type, subType, color} = e.currentTarget.dataset;
 								const {disabled} = e.currentTarget.disabled;
@@ -42,7 +42,7 @@ const ButtonsPanel = ({sleepId, db, buttons, setSleepId}) => {
 		)
 	})
 	return (
-		<div className={'buttons-panel'}>
+		<div className={'buttons-panel'} style={{display: notToday&&'none'}}>
 			{_renderedButtons}
 		</div>
 	)

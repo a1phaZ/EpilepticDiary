@@ -1,6 +1,6 @@
 import React from 'react';
 import Home from "./components/home/Home.component";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import AppNavbar from "./components/navbar/AppNavbar.component";
 import Settings from "./components/settings/Settings.component";
 
@@ -18,6 +18,7 @@ export default function App() {
 				<Route path={'/'}>
 					<Home/>
 				</Route>
+				<Redirect to={'/'} />
 			</Switch>
 		</Router>
 	)
