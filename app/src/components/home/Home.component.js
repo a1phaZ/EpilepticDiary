@@ -129,10 +129,10 @@ class HomeComponent extends Component {
 						<div className="col-md-6">
 							<h5>{this.state._currentDate}</h5>
 							<DatePicker setDate={this.setDateFromDatepicker} currentDate={this.props.currentDate}/>
-							<ButtonsPanel sleepId={this.state.sleepId} db={this.state.db} buttons={buttons}
+							<ButtonsPanel sleepId={this.state.sleepId} db={this.props.db} buttons={buttons}
 														 setSleepId={this.setSleepId} notToday={format(this.props.currentDate, 'yyyy-MM-dd') !== this.state.today}/>
-							<List db={this.state.db} data={items} sleepId={this.state.sleepId} setSleepId={this.setSleepId}/>
-							<ModalPageComponent db={this.state.db} showModal={modalShow} handleClose={hideModal}
+							<List db={this.props.db} data={items} sleepId={this.state.sleepId} setSleepId={this.setSleepId}/>
+							<ModalPageComponent db={this.props.db} showModal={modalShow} handleClose={hideModal}
 																	modal={this.handleModalFilter(modalType, modals)} drugsList={drugs}/>
 						</div>
 					</div>

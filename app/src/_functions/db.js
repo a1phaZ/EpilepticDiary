@@ -4,7 +4,9 @@ export async function init_db() {
 	if (!this.props.db) {
 		const db = await initializeDB();
 		this.props.setDB(db);
+		return db;
 	}
+	return this.props.db;
 }
 
 export async function initializeDB() {
