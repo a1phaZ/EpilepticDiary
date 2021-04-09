@@ -1,13 +1,20 @@
-import {RESET_ITEM, SET_DATE, SET_ITEM, SET_ITEMS} from './actionTypes';
+import {RESET_ITEM, SET_DATE, SET_DB, SET_ITEM, SET_ITEMS} from './actionTypes';
 import {sortData} from "../../_functions/handlersData";
 
 const initialState = {
 	currentDate: new Date().getTime(),
+	db: null,
 	items: []
 }
 
 export const dataReducer = (state = initialState, action) => {
 	switch (action.type) {
+		case SET_DB: {
+			return {
+				...state,
+				db: action.payload.db
+			}
+		}
 		case SET_ITEM: {
 			return {
 				...state,

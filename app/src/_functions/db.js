@@ -1,5 +1,15 @@
 import {openDB} from "idb/with-async-ittr";
 
+export async function init_db() {
+	if (!this.state.db) {
+		const db = await initializeDB();
+		this.setState({db: db});
+		this.props.setDB(db);
+	} else {
+		this.setState({db: this.props.db});
+	}
+}
+
 export async function initializeDB() {
 	return await openDB('epileptic_diary', 1, {
 		upgrade(database) {
@@ -24,6 +34,7 @@ export async function get(db, key, idxPath, idxVal) {
 
 	return items;
 }
+
 
 export async function getOne(db, storeName, key) {
 	let tx = db.transaction('items');

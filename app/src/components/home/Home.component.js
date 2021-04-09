@@ -6,9 +6,9 @@ import ButtonsPanel from "../buttonsPanel/ButtonsPanel.component";
 import {bindActionCreators} from "redux";
 import {disableButton, enableButton, hideModal, showModal} from "../../store/buttonsPanel/actions";
 import {connect} from "react-redux";
-import {setDate, setItem, setItems} from "../../store/data/actions";
+import {setDate, setDB, setItem, setItems} from "../../store/data/actions";
 import ModalPageComponent from "../modalPage/ModalPage.component";
-import {get, initializeDB} from "../../_functions/db";
+import {get, init_db} from "../../_functions/db";
 import {format, subDays} from 'date-fns';
 import {sortData} from "../../_functions/handlersData";
 import {setDrugs} from "../../store/settings/actions";
@@ -22,7 +22,7 @@ class HomeComponent extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			db: null,
+			db: this.props.db,
 			_currentDate: new Intl.DateTimeFormat('ru-RU', {
 				day: 'numeric',
 				month: 'long',
@@ -41,11 +41,13 @@ class HomeComponent extends Component {
 	}
 	
 	initDB = async () => {
-		const db = await initializeDB();
+		await init_db.call(this);
 		
-		this.setState({db: db});
-		
-		await this.getItems();
+		if (this.state.db) {
+			await this.getItems();
+		} else {
+			this.props.setItems([]);
+		}
 	}
 	
 	getItems = async () => {
@@ -149,14 +151,15 @@ const mapStateToProps = (state) => {
 		modals: state.buttons.modals,
 		items: state.data.items,
 		currentDate: state.data.currentDate,
-		drugs: state.settings.drugs
+		drugs: state.settings.drugs,
+		db: state.data.db
 	}
 }
 
 function mapDispatchToProps(dispatch) {
 	return {
 		dispatch,
-		...bindActionCreators({disableButton, enableButton, setItem, hideModal, showModal, setItems, setDrugs, setDate}, dispatch)
+		...bindActionCreators({disableButton, enableButton, setItem, hideModal, showModal, setItems, setDrugs, setDate, setDB}, dispatch)
 	}
 }
 

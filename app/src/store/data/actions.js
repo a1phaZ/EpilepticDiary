@@ -1,4 +1,4 @@
-import {RESET_ITEM, SET_DATE, SET_ITEM, SET_ITEMS} from "./actionTypes";
+import {RESET_ITEM, SET_DATE, SET_ITEM, SET_ITEMS, SET_DB} from "./actionTypes";
 
 export const setItems = (items) => {
 	return {
@@ -32,6 +32,15 @@ export const setDate = (date) => {
 		type: SET_DATE,
 		payload: {
 			date
+		}
+	}
+}
+
+export const setDB = (db) => {
+	return {
+		type: SET_DB,
+		payload: {
+			db
 		}
 	}
 }
