@@ -1,25 +1,27 @@
 import React, {Component, createRef} from 'react';
+import canvasSettings from "./canvas.settings";
 import './styles.css'
+
+console.log(canvasSettings);
 
 class CanvasComponent extends Component{
 	constructor(props) {
 		super(props);
 		
 		this.state = {
-			width: window.screen.width > window.screen.height ? window.screen.width/2 : window.screen.width,
-			height: window.screen.height/2,
-			dpi: 2,
-			data: [0, 100, 250, 150, 300, 320, 100, 460, 50]
+			width: canvasSettings.width,
+			height: canvasSettings.height,
+			data: [['y0', 0, 100, 250, 150, 300, 320, 100, 460, 50], ['y1', 100, 50, 450, 10, 200, 120, 400, 40, 250]]
 		}
 		
 		this.canvas = createRef()
 	}
 	componentDidMount() {
 		const {current: canvas} = this.canvas;
-		canvas.style.width = this.state.width + 'px';
-		canvas.style.height = this.state.height + 'px';
-		canvas.width = this.state.width * this.state.dpi;
-		canvas.height = this.state.height * this.state.dpi;
+		canvas.style.width = canvasSettings.width + 'px';
+		canvas.style.height = canvasSettings.height + 'px';
+		canvas.width = canvasSettings.dpiWidth;
+		canvas.height = canvasSettings.dpiHeight;
 		this.updateCanvas();
 	}
 	
@@ -29,18 +31,26 @@ class CanvasComponent extends Component{
 	}
 	
 	updateCanvas() {
+		const {colors} = this.props.data;
+		const {data} = this.state;
 		const ctx = this.canvas.current.getContext('2d');
-		const step = Math.floor(this.state.width * this.state.dpi / this.state.data.length);
-		const dpi_height = Math.floor(this.state.dpi * this.state.height);
-		ctx.fillStyle = '#000000';
-		ctx.beginPath();
-		let x = 0;
-		for (const y of this.state.data) {
-			ctx.lineTo(x, dpi_height - y);
-			x += step;
-		}
-		ctx.stroke();
-		ctx.closePath();
+		const step = Math.floor(canvasSettings.dpiWidth / data[0].length);
+		ctx.lineWidth = canvasSettings.lineWidth;
+		
+		data.forEach((column) => {
+			ctx.beginPath();
+			let x = 0;
+			ctx.strokeStyle = colors && colors[column[0]];
+			for (const y of column) {
+				if (typeof y === 'string') continue;
+				ctx.lineTo(x, canvasSettings.dpiHeight - y);
+				x += step;
+			}
+			ctx.stroke();
+			ctx.closePath();
+		});
+		
+		
 		// console.log(window.screen.width, window.screen.height);
 		// const {columns, colors} = this.props.data;
 		// const ctx = this.canvas.current.getContext('2d');
@@ -64,7 +74,6 @@ class CanvasComponent extends Component{
 	}
 	
 	render() {
-		console.log(this.props.data);
 		return (
 			<canvas ref={this.canvas} width={this.state.width} height={this.state.height}/>
 		)
