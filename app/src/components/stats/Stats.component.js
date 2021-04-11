@@ -22,7 +22,7 @@ class StatsComponent extends Component {
 			month: format(new Date(), 'yyyy-MM'),
 			startOfRange: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
 			endOfRange: format(endOfMonth(new Date()), 'yyyy-MM-dd'),
-			data4Stats: []
+			data4Stats: null
 		}
 		
 		this.initDB = this.initDB.bind(this);
