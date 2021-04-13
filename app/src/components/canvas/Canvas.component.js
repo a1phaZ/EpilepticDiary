@@ -43,14 +43,14 @@ class CanvasComponent extends Component{
 			const yLineStep = dpiHeight / helperLineCount;
 			const valueStep = Math.round(getMax(columns[1]) / helperLineCount);
 			
-			this.drawHelperYlines(ctx, helperLineCount, dpiHeight, padding, yLineStep, valueStep, dpiWidth);
-			
 			ctx.lineWidth = lineWidth;
 			ctx.font = "25px monospace";
 			
 			const step = Math.floor(dpiWidth / columns[0].length);
 			const delta = (dpiHeight-padding*2)/getMax(columns[1]);
+			
 			columns.forEach((column) => {
+				ctx.save();
 				let _x = 0;
 				
 				switch (types[column[0]]) {
@@ -70,13 +70,29 @@ class CanvasComponent extends Component{
 						if (column.length > 2) {
 							for (const y of column) {
 								if (typeof y === 'string') continue;
-								ctx.lineTo(_x, (dpiHeight-padding) - y*delta);
+								ctx.lineTo(_x+step/2, (dpiHeight-padding*2) - y*delta);
 								_x += step;
 							}
 						} else {
-							ctx.arc(_x+step, Math.round((dpiHeight-padding) - column[1]*delta), 5, 0, Math.PI*2);
+							ctx.arc(_x+step, Math.round((dpiHeight-padding*2) - column[1]*delta), 5, 0, Math.PI*2);
 						}
 						ctx.stroke();
+						ctx.closePath();
+						break;
+					}
+					case 'block': {
+						ctx.beginPath();
+						ctx.fillStyle = colors && colors[column[0]];
+						if (column.length > 2) {
+							for (const y of column) {
+								if (typeof y === 'string') continue;
+								ctx.rect(_x, Math.abs((dpiHeight-padding*2) - y*delta), step, (y*delta));
+								_x += step;
+							}
+						} else {
+							ctx.arc(_x+step, Math.round((dpiHeight-padding*2) - column[1]*delta), 5, 0, Math.PI*2);
+						}
+						ctx.fill();
 						ctx.closePath();
 						break;
 					}
@@ -84,7 +100,10 @@ class CanvasComponent extends Component{
 						break;
 					}
 				}
+				ctx.restore();
 			});
+			
+			this.drawHelperYlines(ctx, helperLineCount, dpiHeight, padding, yLineStep, valueStep, dpiWidth);
 		}
 	}
 	
