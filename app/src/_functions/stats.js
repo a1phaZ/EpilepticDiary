@@ -1,3 +1,4 @@
+import {differenceInDays, addDays, format} from 'date-fns';
 export function filteredByAttack (items, filterType) {
 	return items.filter(({type}) => type.toLowerCase() === filterType.toLowerCase());
 }
@@ -6,7 +7,6 @@ export function filteredByAttack (items, filterType) {
 export function reduceAttackByDate(items) {
 	return items.reduce((acc, item) => {
 		const idx = acc.findIndex(({date}) => date === item.date);
-		
 		if (idx === -1) {
 			return [...acc, {date: item.date, count: +item.count, strength: +item.strength, n: 1}];
 		} else {
@@ -23,7 +23,13 @@ export function reduceAttackByDate(items) {
 //TODO Сделать универсальным
 export function prepareAttackColumns(items) {
 	let attacksArray = [['x'], ['y0'], ['y1']];
-	items.forEach(({date, count, strength, n}) => {
+	items.forEach(({date, count, strength, n}, idx, items) => {
+		const diff = idx !== 0 ? differenceInDays(new Date(date), new Date(items[idx-1].date)) : 0;
+		for (let i = 1; i<diff; i++) {
+			attacksArray[0].push(format(addDays(new Date(items[idx-1].date), i), 'yyyy-MM-dd'));
+			attacksArray[1].push(0);
+			attacksArray[2].push(0);
+		}
 		attacksArray[0].push(date);
 		attacksArray[1].push(+count);
 		attacksArray[2].push(+(strength/n).toFixed(2));
@@ -44,6 +50,16 @@ export function data4Stats (opts) {
 		names: _names,
 		types: _types
 	}
+}
+
+export function getMax(items) {
+	let max = 0;
+	items.forEach((item) => {
+		if (item > max) {
+			max = item;
+		}
+	});
+	return max;
 }
 
 function _reduce(arr, accumulator) {
