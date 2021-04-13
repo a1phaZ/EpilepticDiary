@@ -26,6 +26,7 @@ class CanvasComponent extends Component{
 		canvas.style.paddingBottom = canvasSettings.padding+'px';
 		canvas.style.marginLeft = canvasSettings.margin+'px';
 		canvas.style.marginRight = canvasSettings.margin+'px';
+		// console.log(this.props.data);
 		this.updateCanvas();
 	}
 	
@@ -35,7 +36,7 @@ class CanvasComponent extends Component{
 	
 	updateCanvas() {
 		if (this.props.data) {
-			const {columns, colors} = this.props.data;
+			const {columns, colors, types} = this.props.data;
 			const {dpiWidth, dpiHeight, helperLineCount, padding, lineWidth} = canvasSettings;
 			const ctx = this.canvas.current.getContext('2d');
 			
@@ -44,29 +45,45 @@ class CanvasComponent extends Component{
 			
 			this.drawHelperYlines(ctx, helperLineCount, dpiHeight, padding, yLineStep, valueStep, dpiWidth);
 			
-			ctx.save();
 			ctx.lineWidth = lineWidth;
 			ctx.font = "25px monospace";
 			
-			const step = Math.floor(canvasSettings.dpiWidth / columns[0].length);
-			const delta = canvasSettings.dpiHeight / getMax(columns[1]);
+			const step = Math.floor(dpiWidth / columns[0].length);
+			const delta = (dpiHeight-padding*2)/getMax(columns[1]);
 			columns.forEach((column) => {
 				let _x = 0;
-				if (column[0] === 'x') {
-					const xStep = Math.round(column.length / 5);
-					for (let x = 1; x < column.length; x = x+xStep) {
-						ctx.fillText(format(new Date(column[x]), 'dd MMM'), ((x-1) * step), canvasSettings.dpiHeight - padding);
+				
+				switch (types[column[0]]) {
+					case 'x': {
+						if (column.length > 2) {
+							for (let x = 1; x < column.length; x++) {
+								ctx.fillText(format(new Date(column[x]), 'dd MMM'), ((x-1) * step), dpiHeight - padding);
+							}
+						} else {
+							ctx.fillText(format(new Date(column[1]), 'dd MMM'), step, dpiHeight - padding);
+						}
+						break;
+					}
+					case 'line': {
+						ctx.beginPath();
+						ctx.strokeStyle = colors && colors[column[0]];
+						if (column.length > 2) {
+							for (const y of column) {
+								if (typeof y === 'string') continue;
+								ctx.lineTo(_x, (dpiHeight-padding) - y*delta);
+								_x += step;
+							}
+						} else {
+							ctx.arc(_x+step, Math.round((dpiHeight-padding) - column[1]*delta), 5, 0, Math.PI*2);
+						}
+						ctx.stroke();
+						ctx.closePath();
+						break;
+					}
+					default: {
+						break;
 					}
 				}
-				ctx.beginPath();
-				ctx.strokeStyle = colors && colors[column[0]];
-				for (const y of column) {
-					if (typeof y === 'string') continue;
-					ctx.lineTo(_x, canvasSettings.dpiHeight - y*delta - padding * 2);
-					_x += step;
-				}
-				ctx.stroke();
-				ctx.closePath();
 			});
 		}
 	}
@@ -76,7 +93,6 @@ class CanvasComponent extends Component{
 		ctx.beginPath();
 		ctx.strokeStyle = 'rgb(163,163,163)';
 		ctx.font = "30px monospace";
-		
 		for (let i = 0; i < helperLineCount; i++) {
 			const y = dpiHeight - padding * 2 - yLineStep * i;
 			ctx.moveTo(0, y);
