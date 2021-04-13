@@ -3,6 +3,7 @@ import canvasSettings from "./canvas.settings";
 import {format} from 'date-fns';
 
 import './styles.css';
+import {getMax} from "../../_functions/stats";
 
 class CanvasComponent extends Component{
 	constructor(props) {
@@ -11,11 +12,6 @@ class CanvasComponent extends Component{
 		this.state = {
 			width: canvasSettings.width,
 			height: canvasSettings.height,
-			data: [
-				['x', 0, 100, 250, 150, 300, 320, 100, 460, 50],
-				['y0', 0, 100, 250, 150, 300, 320, 100, 460, 50],
-				['y1', 100, 50, 450, 10, 200, 120, 400, 40, 250]
-			]
 		}
 		
 		this.canvas = createRef()
@@ -26,8 +22,10 @@ class CanvasComponent extends Component{
 		canvas.style.height = canvasSettings.height + 'px';
 		canvas.width = canvasSettings.dpiWidth;
 		canvas.height = canvasSettings.dpiHeight;
-		canvas.style.paddingTop = '20px';
-		canvas.style.paddingBottom = '20px';
+		canvas.style.paddingTop = canvasSettings.padding+'px';
+		canvas.style.paddingBottom = canvasSettings.padding+'px';
+		canvas.style.marginLeft = canvasSettings.margin+'px';
+		canvas.style.marginRight = canvasSettings.margin+'px';
 		this.updateCanvas();
 	}
 	
@@ -36,61 +34,60 @@ class CanvasComponent extends Component{
 	}
 	
 	updateCanvas() {
-		console.log(this.props.data);
 		if (this.props.data) {
-			// console.log(this.props.data);
 			const {columns, colors} = this.props.data;
-			const data = columns || [];
+			const {dpiWidth, dpiHeight, helperLineCount, padding, lineWidth} = canvasSettings;
 			const ctx = this.canvas.current.getContext('2d');
-			const step = Math.floor(canvasSettings.dpiWidth / data[0].length);
-			ctx.lineWidth = canvasSettings.lineWidth;
-			ctx.font = "48px serif";
-
-			data.forEach((column) => {
+			
+			const yLineStep = dpiHeight / helperLineCount;
+			const valueStep = Math.round(getMax(columns[1]) / helperLineCount);
+			
+			this.drawHelperYlines(ctx, helperLineCount, dpiHeight, padding, yLineStep, valueStep, dpiWidth);
+			
+			ctx.save();
+			ctx.lineWidth = lineWidth;
+			ctx.font = "25px monospace";
+			
+			const step = Math.floor(canvasSettings.dpiWidth / columns[0].length);
+			const delta = canvasSettings.dpiHeight / getMax(columns[1]);
+			columns.forEach((column) => {
 				let _x = 0;
-
-				console.log(column);
 				if (column[0] === 'x') {
-					console.log(column.length);
-					// const xStep = Math.round(column.length / 5);
-					// console.log(xStep);
-					for (let x = 1; x < column.length; x++) {
-						ctx.fillText(format(new Date(column[x]), 'dd MMM'), x, canvasSettings.dpiHeight);
+					const xStep = Math.round(column.length / 5);
+					for (let x = 1; x < column.length; x = x+xStep) {
+						ctx.fillText(format(new Date(column[x]), 'dd MMM'), ((x-1) * step), canvasSettings.dpiHeight - padding);
 					}
 				}
-				// ctx.beginPath();
-				// ctx.strokeStyle = colors && colors[column[0]];
-				// for (const y of column) {
-				// 	if (typeof y === 'string') continue;
-				// 	ctx.lineTo(_x, canvasSettings.dpiHeight - y - 30);
-				// 	_x += step;
-				// }
-				// ctx.stroke();
-				// ctx.closePath();
+				ctx.beginPath();
+				ctx.strokeStyle = colors && colors[column[0]];
+				for (const y of column) {
+					if (typeof y === 'string') continue;
+					ctx.lineTo(_x, canvasSettings.dpiHeight - y*delta - padding * 2);
+					_x += step;
+				}
+				ctx.stroke();
+				ctx.closePath();
 			});
 		}
+	}
+	
+	drawHelperYlines(ctx, helperLineCount, dpiHeight, padding, yLineStep, valueStep, dpiWidth) {
+		ctx.save();
+		ctx.beginPath();
+		ctx.strokeStyle = 'rgb(163,163,163)';
+		ctx.font = "30px monospace";
 		
+		for (let i = 0; i < helperLineCount; i++) {
+			const y = dpiHeight - padding * 2 - yLineStep * i;
+			ctx.moveTo(0, y);
+			ctx.fillText((valueStep * i).toString(), 0, y);
+			ctx.setLineDash([15, 5]);
+			ctx.lineTo(dpiWidth, y);
+		}
 		
-		// console.log(window.screen.width, window.screen.height);
-		// const {columns, colors} = this.props.data;
-		// const ctx = this.canvas.current.getContext('2d');
-		// if (colors && columns) {
-		//
-		// 	ctx.fillStyle = '#000000'
-		// 	ctx.beginPath()
-		// 	ctx.lineTo(0, 50);
-		// 	ctx.lineTo(50, 100);
-		// 	ctx.lineTo(100, 50);
-		// 	ctx.stroke();
-		// 	ctx.closePath();
-		// 	// ctx.strokeStyle=colors['y0'];
-		// 	// console.log(ctx.strokeStyle);
-		// 	// ctx.lineWidth='5px';
-		// 	// ctx.beginPath();
-		// 	// ctx.lineTo(100, 100);
-		// 	// ctx.stroke();
-		// 	// ctx.closePath();
-		// }
+		ctx.stroke();
+		ctx.closePath();
+		ctx.restore();
 	}
 	
 	render() {
