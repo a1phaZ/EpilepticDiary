@@ -51,7 +51,7 @@ class StatsComponent extends Component {
 			colors: ['#ffc107', '#F34C40'],
 			columns: attackColumns,
 			names: ['Count', 'Strength'],
-			types: ['block', 'line']
+			types: ['block', 'block']
 		}
 		
 		this.setState({
