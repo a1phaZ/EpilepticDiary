@@ -1,4 +1,4 @@
-import {differenceInDays, addDays, format} from 'date-fns';
+import {differenceInDays, startOfMonth, addDays, format} from 'date-fns';
 export function filteredByAttack (items, filterType) {
 	return items.filter(({type}) => type.toLowerCase() === filterType.toLowerCase());
 }
@@ -22,18 +22,27 @@ export function reduceAttackByDate(items) {
 
 //TODO Сделать универсальным
 export function prepareAttackColumns(items) {
+	// console.log(items);
 	let attacksArray = [['x'], ['y0'], ['y1']];
-	items.forEach(({date, count, strength, n}, idx, items) => {
-		const diff = idx !== 0 ? differenceInDays(new Date(date), new Date(items[idx-1].date)) : 0;
-		for (let i = 1; i<diff; i++) {
-			attacksArray[0].push(format(addDays(new Date(items[idx-1].date), i), 'yyyy-MM-dd'));
+	if (items.length !== 0) {
+		const diff = differenceInDays(new Date(items[0].date), startOfMonth(new Date(items[0].date)));
+		for (let i = 0; i < diff; i++) {
+			attacksArray[0].push(format(addDays(startOfMonth(new Date(items[0].date)), i), 'yyyy-MM-dd'));
 			attacksArray[1].push(0);
 			attacksArray[2].push(0);
 		}
-		attacksArray[0].push(date);
-		attacksArray[1].push(+count);
-		attacksArray[2].push(+(strength/n).toFixed(2));
-	});
+		items.forEach(({date, count, strength, n}, idx, items) => {
+			const diff = idx !== 0 ? differenceInDays(new Date(date), new Date(items[idx - 1].date)) : 0;
+			for (let i = 1; i < diff; i++) {
+				attacksArray[0].push(format(addDays(new Date(items[idx - 1].date), i), 'yyyy-MM-dd'));
+				attacksArray[1].push(0);
+				attacksArray[2].push(0);
+			}
+			attacksArray[0].push(date);
+			attacksArray[1].push(+count);
+			attacksArray[2].push(+(strength / n).toFixed(2));
+		});
+	}
 	
 	return attacksArray;
 }
