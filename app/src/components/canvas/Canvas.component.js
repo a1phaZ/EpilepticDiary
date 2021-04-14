@@ -118,7 +118,7 @@ class CanvasComponent extends Component {
 		const step = Math.round(data.length / colsCount);
 		ctx.beginPath();
 		for (let i = 1; i < data.length; i += step) {
-			const text = new Date(data[i]).toDateString();
+			const text = new Date(data[i]).getDate();
 			const x = (i - 1) * xRatio;
 			ctx.fillText(text.toString(), x, canvasSettings.dpiHeight);
 		}
