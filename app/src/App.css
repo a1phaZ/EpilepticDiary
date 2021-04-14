@@ -128,3 +128,8 @@ body {
   display: table;
   clear: both
 }
+
+.badge-epi {
+  color: #212529;
+  background-color: #9a17b8;
+}

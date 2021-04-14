@@ -28,7 +28,7 @@ const initialState = {
 			type: 'Приступы',
 			icon: 'fa-heartbeat',
 			disabled: false,
-			variant: 'warning',
+			variant: 'epi',
 			onClick: handleShowModal
 		},
 		{
@@ -67,7 +67,7 @@ const initialState = {
 			strength: true,
 			description: false,
 			drugs: false,
-			variant: 'warning',
+			variant: 'epi',
 		},
 		{
 			type: 'Мероприятия',

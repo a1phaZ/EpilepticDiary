@@ -1,11 +1,11 @@
 import React from 'react';
 import {Button} from "react-bootstrap";
-import './ButtonsPanel.styles.css';
 import {add} from "../../_functions/db";
 import {store} from "../../index";
 import {disableButton, enableButton} from "../../store/buttonsPanel/actions";
 import {setItem} from "../../store/data/actions";
 import {format} from "date-fns";
+import './ButtonsPanel.styles.css';
 
 const ButtonsPanel = ({sleepId, db, buttons, setSleepId, notToday}) => {
 	const _renderedButtons = buttons.map((button, idx) => {
@@ -13,6 +13,7 @@ const ButtonsPanel = ({sleepId, db, buttons, setSleepId, notToday}) => {
 		return (
 			<Button key={idx}
 							variant={variant}
+							className={`button-${variant}`}
 							disabled={(sleepId !== -1) && (type.toLowerCase() === 'сон')}
 							onClick={onClick ? onClick : async (e) => {
 								const {type, subType, color} = e.currentTarget.dataset;

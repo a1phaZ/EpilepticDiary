@@ -11,3 +11,9 @@
 .buttons-panel button:nth-last-child(n) {
     margin-right: 0;
 }
+
+.buttons-panel button.button-epi {
+    color: #fff;
+    background-color: #9a17b8;
+    border-color: #9a17b8;
+}
