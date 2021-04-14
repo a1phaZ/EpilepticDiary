@@ -1,6 +1,6 @@
 const canvasSettings = {
 	margin: 20,
-	padding: 20,
+	padding: 40,
 	dpi: 2,
 	lineWidth: 4,
 	helperLineCount: 5,
@@ -10,5 +10,6 @@ canvasSettings.width = window.screen.width > window.screen.height ? (window.scre
 canvasSettings.height = window.screen.height/2;
 canvasSettings.dpiWidth = canvasSettings.width * canvasSettings.dpi;
 canvasSettings.dpiHeight = canvasSettings.height * canvasSettings.dpi;
+canvasSettings.viewHeight = canvasSettings.dpiHeight - canvasSettings.padding * 2;
 
 export default canvasSettings;

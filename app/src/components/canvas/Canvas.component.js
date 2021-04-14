@@ -1,11 +1,9 @@
 import React, {Component, createRef} from 'react';
 import canvasSettings from "./canvas.settings";
-import {format} from 'date-fns';
 
 import './styles.css';
-import {getMax} from "../../_functions/stats";
 
-class CanvasComponent extends Component{
+class CanvasComponent extends Component {
 	constructor(props) {
 		super(props);
 		
@@ -16,16 +14,17 @@ class CanvasComponent extends Component{
 		
 		this.canvas = createRef()
 	}
+	
 	componentDidMount() {
 		const {current: canvas} = this.canvas;
 		canvas.style.width = canvasSettings.width + 'px';
 		canvas.style.height = canvasSettings.height + 'px';
 		canvas.width = canvasSettings.dpiWidth;
 		canvas.height = canvasSettings.dpiHeight;
-		canvas.style.paddingTop = canvasSettings.padding+'px';
-		canvas.style.paddingBottom = canvasSettings.padding+'px';
-		canvas.style.marginLeft = canvasSettings.margin+'px';
-		canvas.style.marginRight = canvasSettings.margin+'px';
+		// canvas.style.paddingTop = canvasSettings.padding+'px';
+		// canvas.style.paddingBottom = canvasSettings.padding+'px';
+		canvas.style.marginLeft = canvasSettings.margin + 'px';
+		canvas.style.marginRight = canvasSettings.margin + 'px';
 		// console.log(this.props.data);
 		this.updateCanvas();
 	}
@@ -37,92 +36,138 @@ class CanvasComponent extends Component{
 	updateCanvas() {
 		if (this.props.data) {
 			const {columns, colors, types} = this.props.data;
-			const {dpiWidth, dpiHeight, helperLineCount, padding, lineWidth} = canvasSettings;
+			const {dpiWidth, dpiHeight, viewHeight} = canvasSettings;
+			const viewWidth = dpiWidth;
+			const [yMin, yMax] = this.computeBoundaries(columns, types);
 			const ctx = this.canvas.current.getContext('2d');
+			ctx.font = "30px monospace";
+			ctx.fillStyle = '#96a2aa';
+			ctx.clearRect(0, 0, dpiWidth, dpiHeight);
 			
-			const yLineStep = dpiHeight / helperLineCount;
-			const valueStep = Math.round(getMax(columns[1]) / helperLineCount);
+			const yRatio = Math.floor(viewHeight / (yMax - yMin));
+			const xRatio = viewWidth / (columns[0].length - 1);
 			
-			ctx.lineWidth = lineWidth;
-			ctx.font = "25px monospace";
+			//
 			
-			const step = Math.floor(dpiWidth / columns[0].length);
-			const delta = (dpiHeight-padding*2)/getMax(columns[1]);
 			
-			columns.forEach((column) => {
-				ctx.save();
-				let _x = 0;
-				
-				switch (types[column[0]]) {
-					case 'x': {
-						if (column.length > 2) {
-							for (let x = 1; x < column.length; x++) {
-								ctx.fillText(format(new Date(column[x]), 'dd MMM'), ((x-1) * step), dpiHeight - padding);
-							}
-						} else {
-							ctx.fillText(format(new Date(column[1]), 'dd MMM'), step, dpiHeight - padding);
-						}
-						break;
-					}
-					case 'line': {
-						ctx.beginPath();
-						ctx.strokeStyle = colors && colors[column[0]];
-						if (column.length > 2) {
-							for (const y of column) {
-								if (typeof y === 'string') continue;
-								ctx.lineTo(_x+step/2, (dpiHeight-padding*2) - y*delta);
-								_x += step;
-							}
-						} else {
-							ctx.arc(_x+step, Math.round((dpiHeight-padding*2) - column[1]*delta), 5, 0, Math.PI*2);
-						}
-						ctx.stroke();
-						ctx.closePath();
-						break;
-					}
-					case 'block': {
-						ctx.beginPath();
-						ctx.fillStyle = colors && colors[column[0]];
-						if (column.length > 2) {
-							for (const y of column) {
-								if (typeof y === 'string') continue;
-								ctx.rect(_x, Math.abs((dpiHeight-padding*2) - y*delta), step, (y*delta));
-								_x += step;
-							}
-						} else {
-							ctx.arc(_x+step, Math.round((dpiHeight-padding*2) - column[1]*delta), 5, 0, Math.PI*2);
-						}
-						ctx.fill();
-						ctx.closePath();
-						break;
-					}
-					default: {
-						break;
-					}
-				}
-				ctx.restore();
+			const yLineData = columns.filter((col) => types[col[0]] === 'line');
+			const yBlockData = columns.filter((col) => types[col[0]] === 'block');
+			const xData = columns.filter((col) => types[col[0]] !== 'line' && types[col[0]] !== 'block')[0];
+			
+			this.drawHelperYLines(ctx, yMin, yMax);
+			this.drawHelperXText(ctx, xData, xRatio);
+			
+			yLineData.map(this.toLineCoords(xRatio, yRatio)).forEach((coords, idx) => {
+				const color = colors[yLineData[idx][0]];
+				this.line(ctx, coords, {color});
 			});
 			
-			this.drawHelperYlines(ctx, helperLineCount, dpiHeight, padding, yLineStep, valueStep, dpiWidth);
+			yBlockData.map(this.toBlockCoords(xRatio, yRatio)).forEach((coords, idx) => {
+				const color = colors[yBlockData[idx][0]];
+				this.block(ctx, coords, {color});
+			});
 		}
 	}
 	
-	drawHelperYlines(ctx, helperLineCount, dpiHeight, padding, yLineStep, valueStep, dpiWidth) {
+	toLineCoords(xRatio, yRatio) {
+		return (col) =>
+			col
+				.map((y, idx) => [
+					Math.floor((idx - 1) * xRatio + xRatio / 3),
+					Math.floor(canvasSettings.dpiHeight - canvasSettings.padding - y * yRatio)
+				])
+				.filter((_, idx) => idx !== 0);
+	}
+	
+	toBlockCoords(xRatio, yRatio) {
+		return (col) =>
+			col
+				.map((y, idx) => [
+					Math.floor((idx - 1) * xRatio),
+					Math.floor(canvasSettings.dpiHeight - canvasSettings.padding - y * yRatio),
+					xRatio / 1.5,
+					y * yRatio
+				])
+				.filter((_, idx) => idx !== 0);
+	}
+	
+	computeBoundaries(columns, types) {
+		let min = null;
+		let max = null;
+		
+		columns.forEach(col => {
+			if (types[col[0] !== 'line' || types[col[0]] !== 'block']) return;
+			
+			if (typeof min !== 'number') min = col[1];
+			if (typeof max !== 'number') max = col[1];
+			
+			if (min > col[1]) min = col[1];
+			if (max < col[1]) max = col[1];
+			
+			for (let i = 2; i < col.length; i++) {
+				if (min > col[i]) min = col[i];
+				if (max < col[i]) max = col[i];
+			}
+		});
+		
+		return [min, max];
+	}
+	
+	drawHelperXText(ctx, data, xRatio) {
+		const colsCount = 6;
+		const step = Math.round(data.length / colsCount);
+		ctx.beginPath();
+		for (let i = 1; i < data.length; i += step) {
+			const text = new Date(data[i]).toDateString();
+			const x = (i - 1) * xRatio;
+			ctx.fillText(text.toString(), x, canvasSettings.dpiHeight);
+		}
+		ctx.closePath();
+	}
+	
+	drawHelperYLines(ctx, yMin, yMax) {
+		const yLineStep = canvasSettings.viewHeight / canvasSettings.helperLineCount; //Шаг между вспомогательными линиями
+		const textStep = (yMax - yMin) / canvasSettings.helperLineCount; //Шаг между вспомогательным текстом
 		ctx.save();
 		ctx.beginPath();
-		ctx.strokeStyle = 'rgb(163,163,163)';
-		ctx.font = "30px monospace";
-		for (let i = 0; i < helperLineCount; i++) {
-			const y = dpiHeight - padding * 2 - yLineStep * i;
-			ctx.moveTo(0, y);
-			ctx.fillText((valueStep * i).toString(), 0, y);
+		ctx.strokeStyle = '#bbb';
+		ctx.font = "20px monospace";
+		ctx.fillStyle = '#96a2aa';
+		for (let i = 1; i <= canvasSettings.helperLineCount; i++) {
+			const y = yLineStep * i;
+			const text = Math.round(yMax - textStep * i);
+			ctx.moveTo(0, y + canvasSettings.padding);
+			ctx.fillText(text.toString(), 0, y + canvasSettings.padding);
 			ctx.setLineDash([15, 5]);
-			ctx.lineTo(dpiWidth, y);
+			ctx.lineTo(canvasSettings.dpiWidth, y + canvasSettings.padding);
 		}
 		
 		ctx.stroke();
 		ctx.closePath();
 		ctx.restore();
+	}
+	
+	line(ctx, coords, {color}) {
+		ctx.beginPath();
+		ctx.lineWidth = 4;
+		ctx.strokeStyle = color;
+		for (const [x, y] of coords) {
+			ctx.lineTo(x, y);
+		}
+		ctx.stroke();
+		ctx.closePath();
+	}
+	
+	block(ctx, coords, {color}) {
+		ctx.beginPath();
+		ctx.lineWidth = 4;
+		ctx.fillStyle = color;
+		for (const [x, y, w, h] of coords) {
+			ctx.rect(x, y, w, h);
+		}
+		ctx.stroke();
+		ctx.fill();
+		ctx.closePath();
 	}
 	
 	render() {
