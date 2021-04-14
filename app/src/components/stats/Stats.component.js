@@ -43,7 +43,7 @@ class StatsComponent extends Component {
 		const attackColumns = prepareAttackColumns(attacksGroupedByDate);
 		
 		const opts = {
-			colors: ['#ffc107', '#F34C40'],
+			colors: ['#9a17b8', '#F34C40'],
 			columns: attackColumns,
 			names: ['Count', 'Strength'],
 			types: ['block', 'block']
