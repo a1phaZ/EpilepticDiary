@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Container} from "react-bootstrap";
+import {Badge, Container} from "react-bootstrap";
 import List from "../timeline/List.component";
 import '../../App.css';
 import ButtonsPanel from "../buttonsPanel/ButtonsPanel.component";
@@ -13,6 +13,7 @@ import {format, subDays} from 'date-fns';
 import {sortData} from "../../_functions/handlersData";
 import {setDrugs} from "../../store/settings/actions";
 import DatePicker from "../datePicker/DatePicker.component";
+import {filteredByType} from "../../_functions/stats";
 
 const ITEMS = 'items';
 const SETTINGS = 'settings';
@@ -102,11 +103,13 @@ class HomeComponent extends Component {
 	
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		if (prevProps.currentDate !== this.props.currentDate) {
-			this.setState({_currentDate: new Intl.DateTimeFormat('ru-RU', {
+			this.setState({
+				_currentDate: new Intl.DateTimeFormat('ru-RU', {
 					day: 'numeric',
 					month: 'long',
 					year: 'numeric'
-				}).format(new Date(this.props.currentDate))});
+				}).format(new Date(this.props.currentDate))
+			});
 			this.getItems();
 		}
 	}
@@ -126,16 +129,20 @@ class HomeComponent extends Component {
 	
 	render() {
 		const {modalType, modals, buttons, modalShow, hideModal, items, drugs} = this.props;
+		const attackCount = filteredByType(items, 'приступы').reduce((acc, {count}) => {
+			return +acc + (+count)
+		}, 0);
 		return (
 			<>
 				<Container>
 					
 					<div className="row d-flex justify-content-center mt-3 mb-auto">
 						<div className="col-md-6">
-							<h5>{this.state._currentDate}</h5>
+							<h5>{this.state._currentDate}<Badge variant={'warning'}>{attackCount}</Badge></h5>
 							<DatePicker setDate={this.setDateFromDatepicker} currentDate={this.props.currentDate}/>
 							<ButtonsPanel sleepId={this.state.sleepId} db={this.props.db} buttons={buttons}
-														 setSleepId={this.setSleepId} notToday={format(this.props.currentDate, 'yyyy-MM-dd') !== this.state.today}/>
+														setSleepId={this.setSleepId}
+														notToday={format(this.props.currentDate, 'yyyy-MM-dd') !== this.state.today}/>
 							<List db={this.props.db} data={items} sleepId={this.state.sleepId} setSleepId={this.setSleepId}/>
 							<ModalPageComponent db={this.props.db} showModal={modalShow} handleClose={hideModal}
 																	modal={this.handleModalFilter(modalType, modals)} drugsList={drugs}/>
@@ -163,7 +170,17 @@ const mapStateToProps = (state) => {
 function mapDispatchToProps(dispatch) {
 	return {
 		dispatch,
-		...bindActionCreators({disableButton, enableButton, setItem, hideModal, showModal, setItems, setDrugs, setDate, setDB}, dispatch)
+		...bindActionCreators({
+			disableButton,
+			enableButton,
+			setItem,
+			hideModal,
+			showModal,
+			setItems,
+			setDrugs,
+			setDate,
+			setDB
+		}, dispatch)
 	}
 }
 
