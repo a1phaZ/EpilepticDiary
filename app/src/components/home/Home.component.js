@@ -102,6 +102,11 @@ class HomeComponent extends Component {
 	
 	componentDidUpdate(prevProps, prevState, snapshot) {
 		if (prevProps.currentDate !== this.props.currentDate) {
+			this.setState({_currentDate: new Intl.DateTimeFormat('ru-RU', {
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric'
+				}).format(new Date(this.props.currentDate))});
 			this.getItems();
 		}
 	}
