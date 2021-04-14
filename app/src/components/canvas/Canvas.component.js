@@ -21,11 +21,8 @@ class CanvasComponent extends Component {
 		canvas.style.height = canvasSettings.height + 'px';
 		canvas.width = canvasSettings.dpiWidth;
 		canvas.height = canvasSettings.dpiHeight;
-		// canvas.style.paddingTop = canvasSettings.padding+'px';
-		// canvas.style.paddingBottom = canvasSettings.padding+'px';
 		canvas.style.marginLeft = canvasSettings.margin + 'px';
 		canvas.style.marginRight = canvasSettings.margin + 'px';
-		// console.log(this.props.data);
 		this.updateCanvas();
 	}
 	
@@ -47,13 +44,14 @@ class CanvasComponent extends Component {
 			const yRatio = Math.floor(viewHeight / (yMax - yMin));
 			const xRatio = viewWidth / (columns[0].length - 1);
 			
-			//
-			
-			
 			const yLineData = columns.filter((col) => types[col[0]] === 'line');
 			const yBlockData = columns.filter((col) => types[col[0]] === 'block');
 			const xData = columns.filter((col) => types[col[0]] !== 'line' && types[col[0]] !== 'block')[0];
-			
+
+			if (!yMin && !yMax) {
+				ctx.fillText('Нет данных для отображения', 20, 50);
+				return;
+			}
 			this.drawHelperYLines(ctx, yMin, yMax);
 			this.drawHelperXText(ctx, xData, xRatio);
 			
@@ -131,6 +129,7 @@ class CanvasComponent extends Component {
 		ctx.save();
 		ctx.beginPath();
 		ctx.strokeStyle = '#bbb';
+		ctx.lineWidth = 1;
 		ctx.font = "20px monospace";
 		ctx.fillStyle = '#96a2aa';
 		for (let i = 1; i <= canvasSettings.helperLineCount; i++) {
