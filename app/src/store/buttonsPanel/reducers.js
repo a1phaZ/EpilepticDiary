@@ -30,6 +30,13 @@ const initialState = {
 			disabled: false,
 			variant: 'warning',
 			onClick: handleShowModal
+		},
+		{
+			type: 'Мероприятия',
+			icon: 'fa-check',
+			disabled: false,
+			variant: 'info',
+			onClick: handleShowModal
 		}
 	],
 	modalShow: false,
@@ -41,6 +48,7 @@ const initialState = {
 			drugs: false,
 			count: false,
 			series: false,
+			variant: 'success',
 			strength: false,
 		},
 		{
@@ -50,6 +58,7 @@ const initialState = {
 			count: false,
 			series: false,
 			strength: false,
+			variant: 'danger',
 		},
 		{
 			type: 'Приступы',
@@ -57,6 +66,16 @@ const initialState = {
 			series: true,
 			strength: true,
 			description: false,
+			drugs: false,
+			variant: 'warning',
+		},
+		{
+			type: 'Мероприятия',
+			count: false,
+			series: false,
+			strength: false,
+			description: true,
+			variant: 'info',
 			drugs: false
 		}
 	]
