@@ -1,5 +1,5 @@
 import {differenceInDays, startOfMonth, addDays, format} from 'date-fns';
-export function filteredByAttack (items, filterType) {
+export function filteredByType (items, filterType) {
 	return items.filter(({type}) => type.toLowerCase() === filterType.toLowerCase());
 }
 

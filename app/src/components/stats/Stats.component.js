@@ -4,14 +4,9 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {setDB} from "../../store/data/actions";
 import {Form, FormGroup} from "react-bootstrap";
-import {startOfMonth, endOfMonth, format} from 'date-fns';
+import {endOfMonth, format, startOfMonth} from 'date-fns';
 import Canvas from '../canvas/Canvas.component';
-import {
-	data4Stats,
-	filteredByAttack,
-	prepareAttackColumns,
-	reduceAttackByDate
-} from "../../_functions/stats";
+import {data4Stats, filteredByType, prepareAttackColumns, reduceAttackByDate} from "../../_functions/stats";
 
 
 class StatsComponent extends Component {
@@ -43,7 +38,7 @@ class StatsComponent extends Component {
 	prepareData = async () => {
 		const {db} = this.props;
 		const items = await get(db, 'items', 'date', IDBKeyRange.bound(this.state.startOfRange, this.state.endOfRange));
-		const attackItems = filteredByAttack(items, 'приступы');
+		const attackItems = filteredByType(items, 'приступы');
 		const attacksGroupedByDate = reduceAttackByDate(attackItems);
 		const attackColumns = prepareAttackColumns(attacksGroupedByDate);
 		
@@ -86,7 +81,7 @@ class StatsComponent extends Component {
 						/>
 					</Form>
 				</FormGroup>
-				<Canvas data={this.state.data4Stats} />
+				<Canvas data={this.state.data4Stats}/>
 			</>
 		)
 	}
