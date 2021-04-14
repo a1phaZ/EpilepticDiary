@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
 
-export const Description = ({handleClose, handleSubmit}) => {
+export const Description = ({handleClose, handleSubmit, type, variant}) => {
 	const [description, setDescription] = useState('');
 	const handleChange = (e) => {
 		setDescription(e.currentTarget.value);
@@ -28,8 +28,8 @@ export const Description = ({handleClose, handleSubmit}) => {
 					onClick={() => {
 						const item = {
 							description: description,
-							type: 'Еда',
-							color: 'badge-success'
+							type: type,
+							color: `badge-${variant}`
 						}
 						handleSubmit(item)
 					}}

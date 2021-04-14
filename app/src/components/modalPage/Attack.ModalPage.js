@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
 
-export const Attack = ({handleClose, handleSubmit}) => {
+export const Attack = ({handleClose, handleSubmit, type, variant}) => {
 	const [count, setCount] = useState(1);
 	const [series, setSeries] = useState(false);
 	const [strength, setStrength] = useState(1);
@@ -74,11 +74,11 @@ export const Attack = ({handleClose, handleSubmit}) => {
 				</Button>
 				<Button variant="primary" onClick={() => {
 					const item = {
-						type: 'Приступы',
+						type: type,
 						count: count,
 						series: series,
 						strength: strength,
-						color: 'badge-warning'
+						color: `badge-${variant}`
 					};
 					handleSubmit(item)
 				}}>

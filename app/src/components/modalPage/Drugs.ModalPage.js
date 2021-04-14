@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {Badge, Button, Form, Modal} from "react-bootstrap";
 import {Link, useRouteMatch} from "react-router-dom";
 
-export const Drugs = ({drugsList = [], handleClose, handleSubmit}) => {
+export const Drugs = ({drugsList = [], handleClose, handleSubmit, type, variant}) => {
 	const [drugs, setDrugs] = useState(() => drugsList.map((drug) => {
 		drug.checked = false;
 		return drug;
@@ -49,9 +49,9 @@ export const Drugs = ({drugsList = [], handleClose, handleSubmit}) => {
 					variant="primary"
 					onClick={() => {
 						const item = {
-							type: 'Лекарства',
+							type: type,
 							drugs: drugs.filter(drug => drug.checked),
-							color: 'badge-danger'
+							color: `badge-${variant}`
 						}
 						handleSubmit(item);
 					}}
