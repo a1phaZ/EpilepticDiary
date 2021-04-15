@@ -12,7 +12,8 @@ class CanvasComponent extends Component {
 			width: canvasSettings.width,
 			height: canvasSettings.height,
 			x: null,
-			details: null
+			details: null,
+			timeOut: null
 		}
 		
 		this.canvas = createRef()
@@ -194,10 +195,14 @@ class CanvasComponent extends Component {
 	}
 	
 	handleTouch(e) {
-		const x = (e.touches[0].clientX - canvasSettings.margin) * canvasSettings.dpiWidth / canvasSettings.width;
+		if (this.state.timeOut) {
+			this.setState({timeOut: clearTimeout(this.state.timeOut)})
+		}
+		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+		const x = (clientX - canvasSettings.margin) * canvasSettings.dpiWidth / canvasSettings.width;
 		const viewWidth = canvasSettings.dpiWidth;
 		const xRatio = viewWidth / (this.props.data.columns[0].length - 1);
-		const index = Math.round(this.props.data.columns[0].length - ((canvasSettings.dpiWidth - this.state.x + (xRatio / 2)) / xRatio));
+		const index = Math.round(this.props.data.columns[0].length - ((canvasSettings.dpiWidth - x + (xRatio / 2)) / xRatio));
 		this.setState({
 			x: x,
 			details:
@@ -208,12 +213,17 @@ class CanvasComponent extends Component {
 						strength: this.props.data.columns[2][index],
 					} :
 					null
-					
 		});
 	}
 	
 	handleTouchLeave() {
-		this.setState({x: null, details: null});
+		if (!this.state.timeOut){
+			this.setState({
+				timeOut: setTimeout(() => {
+					this.setState({x: null, details: null});
+				}, 2000)
+			});
+		}
 	}
 	
 	render() {
@@ -228,16 +238,19 @@ class CanvasComponent extends Component {
 					onTouchMove={this.handleTouch}
 					onTouchCancel={this.handleTouchLeave}
 					onTouchEnd={this.handleTouchLeave}
-					// onMouseEnter={e => console.log(e)}
+					onMouseEnter={this.handleTouch}
+					onMouseMove={this.handleTouch}
+					onMouseLeave={this.handleTouchLeave}
 				/>
 				<Col>
 					{
-						details &&
-						<>
-							<p>Дата: {details.date}</p>
-							<p>Кол-во приступов: {details.attack}</p>
-							<p>Средняя сила: {details.strength} из 3</p>
-						</>
+						details ?
+							<>
+								<p>Дата: {details.date}</p>
+								<p>Кол-во приступов: {details.attack}</p>
+								<p>Средняя сила: {details.strength} из 3</p>
+							</> :
+							<p>Выбирите значение на графике</p>
 					}
 				</Col>
 			</div>
