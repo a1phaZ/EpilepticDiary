@@ -3,7 +3,7 @@ import {get, init_db} from "../../_functions/db";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {setDB} from "../../store/data/actions";
-import {Form, FormGroup} from "react-bootstrap";
+import {Col, Form, FormGroup} from "react-bootstrap";
 import {endOfMonth, format, startOfMonth} from 'date-fns';
 import Canvas from '../canvas/Canvas.component';
 import {data4Stats, filteredByType, prepareAttackColumns, reduceAttackByDate} from "../../_functions/stats";
@@ -63,24 +63,26 @@ class StatsComponent extends Component {
 	render() {
 		return (
 			<>
-				<FormGroup className={'date-picker'}>
-					<Form>
-						<Form.Control
-							type={'month'}
-							className={'month-picker-input'}
-							onKeyDown={(e) => e.preventDefault()}
-							value={this.state.month}
-							onChange={(e) => {
-								const {value} = e.currentTarget;
-								this.setState({
-									month: value,
-									startOfRange: format(startOfMonth(new Date(value)), 'yyyy-MM-dd'),
-									endOfRange: format(endOfMonth(new Date(value)), 'yyyy-MM-dd')
-								});
-							}}
-						/>
-					</Form>
-				</FormGroup>
+				<Col>
+					<FormGroup className={'date-picker'}>
+						<Form>
+							<Form.Control
+								type={'month'}
+								className={'month-picker-input'}
+								onKeyDown={(e) => e.preventDefault()}
+								value={this.state.month}
+								onChange={(e) => {
+									const {value} = e.currentTarget;
+									this.setState({
+										month: value,
+										startOfRange: format(startOfMonth(new Date(value)), 'yyyy-MM-dd'),
+										endOfRange: format(endOfMonth(new Date(value)), 'yyyy-MM-dd')
+									});
+								}}
+							/>
+						</Form>
+					</FormGroup>
+				</Col>
 				<Canvas data={this.state.data4Stats}/>
 			</>
 		)
