@@ -2,6 +2,7 @@ import React, {Component, createRef} from 'react';
 import canvasSettings from "./canvas.settings";
 
 import './styles.css';
+import {Col} from "react-bootstrap";
 
 class CanvasComponent extends Component {
 	constructor(props) {
@@ -11,6 +12,7 @@ class CanvasComponent extends Component {
 			width: canvasSettings.width,
 			height: canvasSettings.height,
 			x: null,
+			details: null
 		}
 		
 		this.canvas = createRef()
@@ -50,7 +52,7 @@ class CanvasComponent extends Component {
 			const yLineData = columns.filter((col) => types[col[0]] === 'line');
 			const yBlockData = columns.filter((col) => types[col[0]] === 'block');
 			const xData = columns.filter((col) => types[col[0]] !== 'line' && types[col[0]] !== 'block')[0];
-
+			
 			if (!yMin && !yMax) {
 				ctx.fillText('Нет данных для отображения', 20, 50);
 				return;
@@ -59,6 +61,7 @@ class CanvasComponent extends Component {
 			this.drawHelperXText(ctx, xData, xRatio);
 			
 			yLineData.map(this.toLineCoords(xRatio, yRatio)).forEach((coords, idx) => {
+				// this.drawHelperXLine(ctx, this.state.x);
 				const color = colors[yLineData[idx][0]];
 				this.line(ctx, coords, {color});
 			});
@@ -69,8 +72,7 @@ class CanvasComponent extends Component {
 			});
 			
 			if (this.state.x) {
-				const x = (this.state.x- canvasSettings.margin) * canvasSettings.dpiWidth  / canvasSettings.width;
-				this.drawHelperXLine(ctx, x);
+				this.drawHelperXLine(ctx, this.state.x);
 			}
 		}
 	}
@@ -192,24 +194,53 @@ class CanvasComponent extends Component {
 	}
 	
 	handleTouch(e) {
-		this.setState({x: e.touches[0].clientX});
+		const x = (e.touches[0].clientX - canvasSettings.margin) * canvasSettings.dpiWidth / canvasSettings.width;
+		const viewWidth = canvasSettings.dpiWidth;
+		const xRatio = viewWidth / (this.props.data.columns[0].length - 1);
+		const index = Math.round(this.props.data.columns[0].length - ((canvasSettings.dpiWidth - this.state.x + (xRatio / 2)) / xRatio));
+		this.setState({
+			x: x,
+			details:
+				(index !== 0 && index <= this.props.data.columns[0].length - 1) ?
+					{
+						date: this.props.data.columns[0][index],
+						attack: this.props.data.columns[1][index],
+						strength: this.props.data.columns[2][index],
+					} :
+					null
+					
+		});
 	}
 	
 	handleTouchLeave() {
-		this.setState({x: null});
+		this.setState({x: null, details: null});
 	}
 	
 	render() {
+		const {details} = this.state;
 		return (
-			<canvas
-				ref={this.canvas}
-				width={this.state.width}
-				height={this.state.height}
-				onTouchStart={this.handleTouch}
-				onTouchMove={this.handleTouch}
-				onTouchEnd={this.handleTouchLeave}
-				// onMouseEnter={e => console.log(e)}
-			/>
+			<div>
+				<canvas
+					ref={this.canvas}
+					width={this.state.width}
+					height={this.state.height}
+					onTouchStart={this.handleTouch}
+					onTouchMove={this.handleTouch}
+					onTouchCancel={this.handleTouchLeave}
+					onTouchEnd={this.handleTouchLeave}
+					// onMouseEnter={e => console.log(e)}
+				/>
+				<Col>
+					{
+						details &&
+						<>
+							<p>Дата: {details.date}</p>
+							<p>Кол-во приступов: {details.attack}</p>
+							<p>Средняя сила: {details.strength} из 3</p>
+						</>
+					}
+				</Col>
+			</div>
 		)
 	}
 }
