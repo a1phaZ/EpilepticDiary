@@ -8,7 +8,7 @@ import {disableButton, enableButton, hideModal, showModal} from "../../store/but
 import {connect} from "react-redux";
 import {setDate, setDB, setItem, setItems} from "../../store/data/actions";
 import ModalPageComponent from "../modalPage/ModalPage.component";
-import {get, init_db} from "../../_functions/db";
+import {deleteItem, get, init_db} from "../../_functions/db";
 import {format, subDays} from 'date-fns';
 import {sortData} from "../../_functions/handlersData";
 import {setDrugs} from "../../store/settings/actions";
@@ -38,6 +38,7 @@ class HomeComponent extends Component {
 		this.addItem = this.addItem.bind(this);
 		this.setSleepId = this.setSleepId.bind(this);
 		this.setDateFromDatepicker = this.setDateFromDatepicker.bind(this);
+		this.deleteItem = this.deleteItem.bind(this);
 	}
 	
 	initDB = async () => {
@@ -93,6 +94,11 @@ class HomeComponent extends Component {
 		}
 	}
 	
+	deleteItem = async (key) => {
+		await deleteItem(this.props.db, ITEMS, +key);
+		await this.getItems();
+	}
+	
 	setDateFromDatepicker = (date) => {
 		this.props.setDate(date);
 	}
@@ -143,7 +149,7 @@ class HomeComponent extends Component {
 							<ButtonsPanel sleepId={this.state.sleepId} db={this.props.db} buttons={buttons}
 														setSleepId={this.setSleepId}
 														notToday={format(this.props.currentDate, 'yyyy-MM-dd') !== this.state.today}/>
-							<List db={this.props.db} data={items} sleepId={this.state.sleepId} setSleepId={this.setSleepId}/>
+							<List db={this.props.db} data={items} sleepId={this.state.sleepId} setSleepId={this.setSleepId} deleteItem={this.deleteItem}/>
 							<ModalPageComponent db={this.props.db} showModal={modalShow} handleClose={hideModal}
 																	modal={this.handleModalFilter(modalType, modals)} drugsList={drugs}/>
 						</div>

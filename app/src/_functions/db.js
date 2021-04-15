@@ -61,3 +61,13 @@ export async function put(db, item, storeName) {
 		throw e;
 	}
 }
+
+export async function deleteItem(db, storeName, key) {
+	let tx = db.transaction(storeName, 'readwrite');
+	let itemsStore = tx.objectStore(storeName);
+	try {
+		await itemsStore.delete(key);
+	} catch (e) {
+		throw e;
+	}
+}
