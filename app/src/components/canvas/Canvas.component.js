@@ -10,9 +10,12 @@ class CanvasComponent extends Component {
 		this.state = {
 			width: canvasSettings.width,
 			height: canvasSettings.height,
+			x: null,
 		}
 		
 		this.canvas = createRef()
+		this.handleTouch = this.handleTouch.bind(this);
+		this.handleTouchLeave = this.handleTouchLeave.bind(this);
 	}
 	
 	componentDidMount() {
@@ -64,6 +67,11 @@ class CanvasComponent extends Component {
 				const color = colors[yBlockData[idx][0]];
 				this.block(ctx, coords, {color});
 			});
+			
+			if (this.state.x) {
+				const x = (this.state.x- canvasSettings.margin) * canvasSettings.dpiWidth  / canvasSettings.width;
+				this.drawHelperXLine(ctx, x);
+			}
 		}
 	}
 	
@@ -146,6 +154,20 @@ class CanvasComponent extends Component {
 		ctx.restore();
 	}
 	
+	drawHelperXLine(ctx, x) {
+		ctx.save();
+		ctx.beginPath();
+		ctx.strokeStyle = '#bbb';
+		ctx.lineWidth = 1;
+		
+		ctx.moveTo(x, 0);
+		ctx.lineTo(x, canvasSettings.dpiHeight);
+		
+		ctx.stroke();
+		ctx.closePath();
+		ctx.restore();
+	}
+	
 	line(ctx, coords, {color}) {
 		ctx.beginPath();
 		ctx.lineWidth = 4;
@@ -169,9 +191,25 @@ class CanvasComponent extends Component {
 		ctx.closePath();
 	}
 	
+	handleTouch(e) {
+		this.setState({x: e.touches[0].clientX});
+	}
+	
+	handleTouchLeave() {
+		this.setState({x: null});
+	}
+	
 	render() {
 		return (
-			<canvas ref={this.canvas} width={this.state.width} height={this.state.height}/>
+			<canvas
+				ref={this.canvas}
+				width={this.state.width}
+				height={this.state.height}
+				onTouchStart={this.handleTouch}
+				onTouchMove={this.handleTouch}
+				onTouchEnd={this.handleTouchLeave}
+				// onMouseEnter={e => console.log(e)}
+			/>
 		)
 	}
 }
