@@ -9,6 +9,8 @@ import {Drugs} from "./Drugs.ModalPage";
 import {add} from "../../_functions/db";
 import {format} from 'date-fns';
 
+const ITEMS = 'items';
+
 const ModalPageComponent = ({db, handleClose, showModal, modal = {}, drugsList}) => {
 	const {type, description, drugs, count, series, strength, variant} = modal;
 	const [show, setShow] = useState(false);
@@ -16,7 +18,7 @@ const ModalPageComponent = ({db, handleClose, showModal, modal = {}, drugsList})
 	const handleSubmit = async (item) => {
 		item.time = new Date().getTime();
 		item.date = format(new Date(), 'yyyy-MM-dd');
-		await add(db, item, 'items');
+		item._id = await add(db, item, ITEMS);
 		store.dispatch(setItem(item));
 		store.dispatch(hideModal());
 	}
