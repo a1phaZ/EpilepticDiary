@@ -5,6 +5,8 @@ import {getOne, put} from "../../_functions/db";
 import {resetItem} from "../../store/data/actions";
 import {store} from "../../index";
 
+const deleteDelay = 1000*60*30; //delay 30 min.
+
 const formatTime = (time) => {
 	const date = new Date(time);
 	return new Intl.DateTimeFormat('ru-RU', {hour: 'numeric', minute: 'numeric'}).format(date);
@@ -26,6 +28,17 @@ const getSleepDuration = (timeStart, timeEnd) => {
 }
 
 const Element = ({db, type, drugs = [], subType, description, time, color, quality, strength, count, series, timeEnd, sleepId, setSleepId, index, _id, deleteItem}) => {
+	const _enableDelete = time + deleteDelay > new Date().getTime();
+	const _renderedDeleteButton = (
+		<Button
+			variant={'link'}
+			size={'sm'}
+			data-id = {_id}
+			onClick={(e) => {deleteItem(e.currentTarget.dataset.id)}}
+		>
+			<i className="fa fa-trash" aria-hidden="true"></i> Удалить
+		</Button>
+	)
 	const _renderedDrugs = drugs.map((drug, idx) => {
 		const {title, dosage} = drug;
 		return (
@@ -73,15 +86,7 @@ const Element = ({db, type, drugs = [], subType, description, time, color, quali
 					{drugs && _renderedDrugs}
 					<span className="vertical-timeline-element-date">{formatTime(time)}</span>
 					{
-						index === 0 &&
-						<Button
-							variant={'link'}
-							size={'sm'}
-							data-id = {_id}
-							onClick={(e) => {deleteItem(e.currentTarget.dataset.id)}}
-						>
-							<i className="fa fa-trash" aria-hidden="true"></i> Удалить
-						</Button>
+						(index === 0 && _enableDelete) && _renderedDeleteButton
 					}
 				</div>
 			</div>
