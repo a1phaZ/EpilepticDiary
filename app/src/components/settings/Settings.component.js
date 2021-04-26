@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Container} from "react-bootstrap";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import {get, initializeDB} from "../../_functions/db";
+import {deleteItem, get, initializeDB} from "../../_functions/db";
 import {setDrug, setDrugs} from "../../store/settings/actions";
 import DrugForm from "./DrugForm.component";
 import DrugsList from "./DrugsList";
@@ -26,6 +26,7 @@ class Settings extends Component {
 		this.initDB = this.initDB.bind(this);
 		this.getItems = this.getItems.bind(this);
 		this.setDrug = this.setDrug.bind(this);
+		this.deleteDrug = this.deleteDrug.bind(this);
 	}
 	
 	initDB = async () => {
@@ -41,6 +42,9 @@ class Settings extends Component {
 	getItems = async () => {
 		const {db} = this.state;
 		let drugs = await get(db, SETTINGS, 'type', 'drug');
+		if (drugs.length === 0) {
+			this.props.setDrugs([]);
+		}
 		if (drugs.length) {
 			this.props.setDrugs(drugs);
 		}
@@ -62,6 +66,11 @@ class Settings extends Component {
 		await this.getItems();
 	}
 	
+	deleteDrug = async (key) => {
+		await deleteItem(this.state.db, SETTINGS, +key);
+		await this.getItems();
+	}
+	
 	componentDidMount() {
 		this.initDB();
 	}
@@ -75,7 +84,7 @@ class Settings extends Component {
 						<div className={'dropdown-divider'} />
 						<h6>Лекарства</h6>
 						<DrugForm setDrug={this.setDrug} />
-						<DrugsList data={sortData(this.props.drugs)} />
+						<DrugsList data={sortData(this.props.drugs)} deleteItem={this.deleteDrug}/>
 						<div className={'dropdown-divider'} />
 					</div>
 				</div>
@@ -86,7 +95,8 @@ class Settings extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		drugs: state.settings.drugs
+		drugs: state.settings.drugs,
+		
 	}
 }
 
