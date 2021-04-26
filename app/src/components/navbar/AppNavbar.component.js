@@ -9,7 +9,7 @@ export default function AppNavbar() {
 			<Navbar.Toggle aria-controls="responsive-navbar-nav"/>
 			<Navbar.Collapse id="responsive-navbar-nav">
 				<Nav>
-					<Link className={'nav-link'} to="/settings">Настройки</Link>
+					<Link className={'nav-link'} to="/settings">Лекарства</Link>
 					<Link className={'nav-link'} to="/stats" disabled>Статистика</Link>
 				</Nav>
 			</Navbar.Collapse>

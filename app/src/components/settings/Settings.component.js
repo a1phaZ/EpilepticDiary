@@ -80,9 +80,9 @@ class Settings extends Component {
 			<Container>
 				<div className="row d-flex justify-content-center mt-3 mb-auto">
 					<div className="col-md-6">
-						<h5>Настройки</h5>
+						<h5>Лекарства</h5>
 						<div className={'dropdown-divider'} />
-						<h6>Лекарства</h6>
+						{/*<h6>Лекарства</h6>*/}
 						<DrugForm setDrug={this.setDrug} />
 						<DrugsList data={sortData(this.props.drugs)} deleteItem={this.deleteDrug}/>
 						<div className={'dropdown-divider'} />
